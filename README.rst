@@ -11,12 +11,13 @@ Required Libraries
 ==================
 
 * numpy
+* scipy
+* matplotlib (for testing sound_shift_fft)
 
 Submodules
 ==========
 
-* sound_map: サウンドマップを描く。
-* ransac_detect: RANSACを用いてS字カーブを検出する。
+* soundmap: サウンドマップを描くためのモジュール。
 
 Usage
 =====
