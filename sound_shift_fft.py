@@ -8,7 +8,6 @@
 
 import numpy as np
 from soundmap.signal_process import SignalProcess
-import matplotlib.pyplot as plt
 
 #==========================================================================
 class SoundShiftFFT(SignalProcess):
@@ -95,6 +94,8 @@ class SoundShiftFFT(SignalProcess):
 
 #==========================================================================
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
     samp_freq = 48e3
     freq = 1e3
 
