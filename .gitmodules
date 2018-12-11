@@ -1,0 +1,3 @@
+[submodule "soundmap"]
+	path = soundmap
+	url = git@git.f.ait.kyushu-u.ac.jp:its/sound-map.git
