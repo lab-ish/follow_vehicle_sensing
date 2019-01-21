@@ -66,7 +66,7 @@ class SoundShiftFFT(SignalProcess):
     #----------------------------------------------------------------------
     def shift_merge_fft(self,
                         time_deltas,    # 時間差 [s] (data2を基準としてdata1をどれくらいずらすか
-                                        # 各offsetの値を並べたnp.arrayとする
+                                        # 各FFT offsetにおける時間差を並べたnp.arrayとすること
                         offset=0,       # 参照するデータの開始位置 (FFT sampleで)
                         samp_len=None,  # 参照するデータの長さ (FFT sampleで)
                         ):
