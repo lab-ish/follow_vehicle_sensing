@@ -44,12 +44,16 @@ class ExtFeature():
 
     #----------------------------------------------------------------------
     # default S-curve model
-    def model_func(self, t_diff, v):
-        if type(v) is not np.ndarray:
-            return ( np.sqrt( (v*t_diff + self.D/2)**2 + self.L**2 )
-                        - np.sqrt( (v*t_diff - self.D/2)**2 + self.L**2 ) ) / self.c
+    def model_func(self, t, param):
+        if len(param.shape) == 1:
+            v  = param[0]
+            t0 = param[1]
+            return ( np.sqrt( (v*(t-t0) + self.D/2)**2 + self.L**2 )
+                        - np.sqrt( (v*(t-t0) - self.D/2)**2 + self.L**2 ) ) / self.c
 
-        vt = t_diff * np.tile(v, [len(t), 1]).T
+        v  = param[:,0]
+        t0 = param[:,1]
+        vt = (np.tile(t, [len(v), 1]) - np.tile(t0, [len(t), 1]).T) * np.tile(v, [len(t), 1]).T
         return ( np.sqrt((vt+self.D/2)**2 + self.L**2)
                 - np.sqrt((vt-self.D/2)**2 + self.L**2) ) / self.c
 
@@ -61,23 +65,31 @@ class ExtFeature():
         time_delta = time_idx * self.samp_int
         # find the nearest FFT offset to time t0
         t0_offset = int(np.round(t0 / self.samp_int))
-        # # time adjusted to FFT sampling timing
-        # t0_adjust = t0_offset * self.samp_int
 
         # limit the range of time
         time_idx += t0_offset
         time_idx = time_idx[(time_idx >= 0) & (time_idx < self.sig.fft_data1.shape[0])]
 
-        return (time_idx, time_delta, t0_offset)
-        
+        return (time_idx, t0_offset)
+
     #----------------------------------------------------------------------
     # feature extraction method 1: shift and merge in freq domain
     def feature_shift_fft(self, t0, v):
-        time_idx, time_delta, t0_offset = self.time_indices(t0, v)
+        time_idx, t0_offset = self.time_indices(t0, v)
         # calculate sound delay at each time index
-        sound_delay = self.model(time_delta, v)
+        sound_delay = self.model(time_idx*self.samp_int, np.array([v, t0_offset*self.samp_int]))
 
-        return sound_delay
+        # shift back back left channel and merge in freq domain
+        fft_merged = self.sig.shift_merge_fft(-sound_delay, time_idx[0])
+
+        return fft_merged
+
+    #----------------------------------------------------------------------
+    # feature extraction method 2: single channel, freq domain
+    def feature_single_fft(self, t0, v):
+        time_idx, t0_offset = self.time_indices(t0, v)
+
+        return np.array(self.sig.fft_data1[time_idx])
 
 #==========================================================================
 if __name__ == '__main__':
