@@ -73,7 +73,7 @@ class ExtFeature():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def agg_feature_matrix(self, feature_matrix, winsize=10, cutoff=3e3):
+    def agg_feature_matrix(self, feature_matrix, winsize=10, cutoff=3e3, slide=False):
         # moving average window
         ma_win = np.ones(winsize) / winsize
 
@@ -81,11 +81,24 @@ class ExtFeature():
         cutoff_len = int(np.round(self.sig.samp_rate / 2 / cutoff)) + 1
         feature_matrix = feature_matrix[:,0:cutoff_len]
 
-        # matrix for storing results
-        ret = np.empty([feature_matrix.shape[0]-winsize+1, feature_matrix.shape[1]], dtype=np.complex)
-        # moving average for each column (freq) of feature_matrix
-        for i in range(feature_matrix.shape[1]):
-            ret[:,i] = np.convolve(np.real(feature_matrix[:,i]), ma_win, mode='valid') + np.convolve(np.imag(feature_matrix[:,i]), ma_win, mode='valid')*1j
+        # sliding window?
+        if slide:
+            # matrix for storing results
+            ret = np.empty([feature_matrix.shape[0]-winsize+1, feature_matrix.shape[1]],
+                           dtype=np.complex)
+            # moving average for each column (freq) of feature_matrix
+            for i in range(feature_matrix.shape[1]):
+                ret[:,i] = np.convolve(np.real(feature_matrix[:,i]), ma_win, mode='valid') \
+                  + np.convolve(np.imag(feature_matrix[:,i]), ma_win, mode='valid')*1j
+        else:
+            # divide each freq component in winsize and average
+            # cut the last part of residuals
+            cut = feature_matrix.shape[0] % winsize
+            if cut != 0:
+                feature_matrix = feature_matrix[0:-cut,:]
+            # average the each divided data
+            ret = np.mean(feature_matrix.reshape(-1,winsize,feature_matrix.shape[1]),
+                          axis=1)
 
         return ret
 
