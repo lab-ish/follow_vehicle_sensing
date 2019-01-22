@@ -73,6 +73,23 @@ class ExtFeature():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
+    def agg_feature_matrix(self, feature_matrix, winsize=10, cutoff=3e3):
+        # moving average window
+        ma_win = np.ones(winsize) / winsize
+
+        # limit frequency range
+        cutoff_len = int(np.round(self.sig.samp_rate / 2 / cutoff)) + 1
+        feature_matrix = feature_matrix[:,0:cutoff_len]
+
+        # matrix for storing results
+        ret = np.empty([feature_matrix.shape[0]-winsize+1, feature_matrix.shape[1]], dtype=np.complex)
+        # moving average for each column (freq) of feature_matrix
+        for i in range(feature_matrix.shape[1]):
+            ret[:,i] = np.convolve(np.real(feature_matrix[:,i]), ma_win, mode='valid') + np.convolve(np.imag(feature_matrix[:,i]), ma_win, mode='valid')*1j
+
+        return ret
+
+    #----------------------------------------------------------------------
     # feature extraction method 1: shift and merge in freq domain
     def feature_shift_fft(self, t0, v):
         time_idx, t0_offset = self.time_indices(t0, v)
