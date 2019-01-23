@@ -17,13 +17,11 @@ class SoundShiftFFT(SignalProcess):
                  samp_rate=48e3,     # sampling rate [Hz]
                  winsize=512,        # FFT window size [samples]
                  shift=128,          # FFT window shift size [samples]
-                 sound_window=2.0,   # sound shifting window size [s]
                  ):
         super(SoundShiftFFT, self).__init__(data1, data2, samp_rate, winsize, shift)
 
         self.samp_rate = samp_rate
         self.folds = int(self.folds)
-        self.sound_window = sound_window
         self.max_offset = self.data1.shape[0] - self.folds
 
         return
@@ -61,22 +59,16 @@ class SoundShiftFFT(SignalProcess):
         self.fft_data1 = np.fft.rfft(win * shift_data1)
         self.fft_data2 = np.fft.rfft(win * shift_data2)
 
-        return shift_data1
+        return
 
     #----------------------------------------------------------------------
     def shift_merge_fft(self,
                         time_deltas,    # 時間差 [s] (data2を基準としてdata1をどれくらいずらすか
                                         # 各FFT offsetにおける時間差を並べたnp.arrayとすること
                         offset=0,       # 参照するデータの開始位置 (FFT sampleで)
-                        samp_len=None,  # 参照するデータの長さ (FFT sampleで)
                         ):
-        if samp_len is None:
-            samp_len = len(time_deltas)
+        samp_len = len(time_deltas)
         
-        # 指定長さ分のtime_deltasがないときはエラー
-        if len(time_deltas) != samp_len:
-            return None
-
         # shift量 (時間sample)
         m = np.array(time_deltas * self.samp_rate, dtype=np.int)
 
@@ -104,7 +96,7 @@ if __name__ == '__main__':
     data2 = np.sin(2*np.pi*freq*(t+0.2e-3))
 
     s = SoundShiftFFT(data1, data1)
-    shift_data1 = s.fft_all()
+    s.fft_all()
     time_deltas = np.array([-0.4e-3, 0.2e-3, 0.4e-3, -0.3e-3])
     merge_fft = s.shift_merge_fft(time_deltas)
 
