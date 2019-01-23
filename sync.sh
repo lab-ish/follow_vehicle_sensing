@@ -8,11 +8,11 @@ SSH="ssh"
 case "$1" in
     up)
 	src=./
-	dst=flab-pc:/home/ishida/follow_vehicle_sensing
+	dst=destpc:/path/to/dir
 	SSH=ssh
 	;;
     down)
-	src=flab-pc:/home/ishida/follow_vehicle_sensing
+	src=destpc:/path/to/dir
 	dst=./
 	SSH=ssh
 	;;
