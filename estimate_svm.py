@@ -115,6 +115,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         y = self.feature_matrix[:,-1]
 
         # resample data to balance the training/test data
+        print("resample data to balance")
         uniq, counts = np.unique(y, return_counts=True)
         counts[:] = np.min(counts)
         sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=0)
@@ -212,4 +213,4 @@ if __name__ == '__main__':
 
     # plot confusion matrix
     if args.plot is not None:
-        c.plot_confusion_matrix(args.plot)
+        e.plot_confusion_matrix(args.plot)
