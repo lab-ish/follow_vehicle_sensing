@@ -10,10 +10,11 @@ import os
 import sys
 import numpy as np
 import importlib
-from sklearn.svm import SVC
+from sklearn import svm
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import RepeatedStratifiedKFold, train_test_split
-from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import StandardScaler
+from imblearn.under_sampling import RandomUnderSampler
 
 import vehicles
 import conf_mat_plotting
@@ -80,7 +81,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         # release model
         del self.model
         # reload model
-        self.model = SVC()
+        self.model = svm.LinearSVC(loss='hinge', C=1.0, class_weight='balanced', random_state=0)
 
         return self.model
 
@@ -88,12 +89,18 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
     def eval(self, x_train, y_train, x_test, y_test):
         # recompile model
         self.define_model()
+
+        # feature scaling
+        scaler = StandardScaler()
+        x_train_scaled = scaler.fit_transform(x_train)
+        x_test_scaled  = scaler.transform(x_test)
+
         # training
-        self.model.fit(x_train, y_train)
-        test_score = self.model.score(x_train, y_train)
+        self.model.fit(x_train_scaled, y_train)
+        test_score = self.model.score(x_train_scaled, y_train)
 
         # estimation
-        y_est = self.model.predict(x_test)
+        y_est = self.model.predict(x_test_scaled)
 
         # generate confusion matrix
         conf_mat = confusion_matrix(y_test, y_est)
@@ -108,8 +115,10 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         y = self.feature_matrix[:,-1]
 
         # resample data to balance the training/test data
-        smote = SMOTE()
-        x_resamp, y_resamp = smote.fit_sample(x, y)
+        uniq, counts = np.unique(y, return_counts=True)
+        counts[:] = np.min(counts)
+        sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=0)
+        x_resamp, y_resamp = sampler.fit_sample(x, y)
 
         # folded validation
         skf = RepeatedStratifiedKFold(n_splits=folds, n_repeats=repeat)
@@ -147,7 +156,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         with open(self.score_file, 'a') as f:
             np.savetxt(f,
                        np.array([score]),
-                       fmt=["%f"]*2,
+                       fmt=["%f"],
                        delimiter=",",
                        )
 
