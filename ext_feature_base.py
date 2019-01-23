@@ -12,7 +12,7 @@ from sound_shift_fft import SoundShiftFFT
 from soundmap.wave_data import WaveData
 
 #==========================================================================
-class ExtFeature():
+class ExtFeatureBase():
     def __init__(self, wavfile, win=4.0, D=0.5, L=2.0):
         self.wavfile = wavfile  # vehicle sound .wav file
         self.win     = win      # window size in second
@@ -101,25 +101,6 @@ class ExtFeature():
                           axis=1)
 
         return ret
-
-    #----------------------------------------------------------------------
-    # feature extraction method 1: shift and merge in freq domain
-    def feature_shift_fft(self, t0, v):
-        time_idx, t0_offset = self.time_indices(t0, v)
-        # calculate sound delay at each time index
-        sound_delay = self.model(time_idx*self.samp_int, np.array([v, t0_offset*self.samp_int]))
-
-        # shift back back left channel and merge in freq domain
-        fft_merged = self.sig.shift_merge_fft(-sound_delay, time_idx[0])
-
-        return fft_merged
-
-    #----------------------------------------------------------------------
-    # feature extraction method 2: single channel, freq domain
-    def feature_single_fft(self, t0, v):
-        time_idx, t0_offset = self.time_indices(t0, v)
-
-        return np.array(self.sig.fft_data1[time_idx])
 
 #==========================================================================
 if __name__ == '__main__':
