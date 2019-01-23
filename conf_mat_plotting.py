@@ -8,6 +8,7 @@
 # requires python >= ver.3.5
 # 
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -38,10 +39,11 @@ class ConfMatPlotting():
             # plt.rcParams['axes.linewidth'] = 1              # 軸の太さ
             fig.subplots_adjust(bottom = 0.15)              # 下の余白を増やす
 
-            # EPS出力のためのおまじない
-            plt.rcParams['ps.useafm'] = True
-            plt.rcParams['pdf.use14corefonts'] = True
-            plt.rcParams['text.usetex'] = True
+            if os.path.splitext(plot_file)[1] == "eps":
+                # EPS出力のためのおまじない
+                plt.rcParams['ps.useafm'] = True
+                plt.rcParams['pdf.use14corefonts'] = True
+                plt.rcParams['text.usetex'] = True
 
         sns.heatmap(self.final_conf_matrix,
                     cmap="Blues",
