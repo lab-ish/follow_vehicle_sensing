@@ -73,19 +73,22 @@ class ExtFeatureBase():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def agg_feature_matrix(self, feature_matrix, winsize=10, cutoff=3e3, slide=False):
-        # moving average window
-        ma_win = np.ones(winsize) / winsize
+    def feature(self, t0, v, winsize=10, cutoff=3e3, slide=True):
+        # derive feature matrix
+        feature_matrix = self.extract_feature(t0, v)
 
-        # limit frequency range
-        cutoff_len = int(np.round(self.sig.samp_rate / 2 / cutoff)) + 1
-        feature_matrix = feature_matrix[:,0:cutoff_len]
+        # limit frequency range (also exclude DC)
+        if cutoff is not None:
+            cutoff_len = int(np.round(self.sig.samp_rate / 2 / cutoff))
+            feature_matrix = feature_matrix[:,1:cutoff_len+1]
 
         # sliding window?
         if slide:
             # matrix for storing results
             ret = np.empty([feature_matrix.shape[0]-winsize+1, feature_matrix.shape[1]],
                            dtype=np.complex)
+            # moving average window
+            ma_win = np.ones(winsize) / winsize
             # moving average for each column (freq) of feature_matrix
             for i in range(feature_matrix.shape[1]):
                 ret[:,i] = np.convolve(np.real(feature_matrix[:,i]), ma_win, mode='valid') \
@@ -100,7 +103,14 @@ class ExtFeatureBase():
             ret = np.mean(feature_matrix.reshape(-1,winsize,feature_matrix.shape[1]),
                           axis=1)
 
-        return ret
+        # calculate amplitude/phase difference
+        diff = ret[0:-1,:] / ret[1:,:]
+
+        return np.c_[np.abs(diff), np.angle(diff)]
+
+    #----------------------------------------------------------------------
+    def extract_feature(self, t0, v):
+        return np.empty([self.winlen, self.win])
 
 #==========================================================================
 if __name__ == '__main__':
