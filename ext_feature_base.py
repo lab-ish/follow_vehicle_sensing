@@ -13,10 +13,12 @@ from soundmap.wave_data import WaveData
 
 #==========================================================================
 class ExtFeatureBase():
-    def __init__(self, wavfile, win=4.0, cutoff=None, D=0.5, L=2.0):
+    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, D=0.5, L=2.0):
         self.wavfile = wavfile  # vehicle sound .wav file
         self.win     = win      # window size in second
         self.cutoff  = cutoff   # LPF cutoff frequency
+        self.fft_len = fft_len  # FFT window size
+        self.fft_shift = fft_shift # FFT shift length
         self.D       = D        # mic separation
         self.L       = L        # distance between road the mic
 
@@ -33,6 +35,8 @@ class ExtFeatureBase():
         self.sig = SoundShiftFFT(np.array(wav.left),
                                  np.array(wav.right),
                                  wav.sample_rate,
+                                 self.fft_len,
+                                 self.fft_shift,
                                  )
         self.sig.fft_all()
         del wav

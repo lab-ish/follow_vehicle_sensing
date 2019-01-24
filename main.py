@@ -75,6 +75,8 @@ if __name__ == '__main__':
                            score_file="%s_score.csv" % (save_base),
                            winsize=config.winsize,
                            cutoff=config.cutoff,
+                           fft_len=config.fft_len,
+                           fft_shift=config.fft_shift,
                            )
 
     # データ読み込み
