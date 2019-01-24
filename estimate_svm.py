@@ -16,75 +16,32 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from imblearn.under_sampling import RandomUnderSampler
 
-import vehicles
 import conf_mat_plotting
 
 #==========================================================================
 class Estimate(conf_mat_plotting.ConfMatPlotting):
     def __init__(self,
-                 ext_feature_class="ext_feature_shift_fft", # feature extraction class file
+                 ext_feature=None, # feature extraction class instance
+                 vehicles=None,    # vehicle information class instance
                  result_file=None, # output filename for results
                  score_file=None,  # output filename for test score
-                 winsize=None,     # window size for each vehicle
-                 cutoff=None,      # cutoff frequency
-                 fft_len=None,     # FFT window size
-                 fft_shift=None,   # FFT shift length
-                 ma_len=None,      # moving average window size
-                 ma_overlap=None,  # flag if moving average windows overlap
                  ):
         super(Estimate, self).__init__()
+        self.ext_feature = ext_feature
+        self.vehicles    = vehicles
         self.result_file = result_file
-        self.score_file = score_file
-        self.winsize = winsize
-        self.cutoff = cutoff
-        self.fft_len = fft_len
-        self.fft_shift = fft_shift
-        self.ma_len = ma_len
-        self.ma_overlap = ma_overlap
+        self.score_file  = score_file
 
-        self.model = None          # machine learning model
-        self.results = None        # results
-        self.ext_feature = None    # feature extraction class
-        self.vehicles = None       # vehicle data class
-        self.classes = None        # number of classes (labels)
+        self.model       = None # machine learning model
+        self.results     = None # results
+        self.classes     = None # number of classes (labels)
         # feature matrix: features, label (= vehicle type id)
         self.feature_matrix = None
-
-        # import feature extraction class
-        self.load_ext_feature_class(ext_feature_class)
 
         return
 
     #----------------------------------------------------------------------
-    def load_ext_feature_class(self, class_file):
-        # add feature extraction class path to the import path
-        base_path = os.path.dirname(class_file)
-        base_file, base_ext = os.path.splitext(os.path.basename(class_file))
-        sys.path.append(base_path)
-        base_name = base_file.split("_")[:2]
-
-        # import feature extraction class
-        self.ext = importlib.import_module(base_file)
-
-        return True
-
-    #----------------------------------------------------------------------
-    def load_data(self, vehicle_file, wavfile):
-        # load sound data
-        print("load sound data %s" % wavfile)
-        self.ext_feature = self.ext.ExtFeature(wavfile=wavfile,
-                                               win=self.winsize,
-                                               cutoff=self.cutoff,
-                                               fft_len=self.fft_len,
-                                               fft_shift=self.fft_shift,
-                                               ma_len=self.ma_len,
-                                               )
-        self.ext_feature.load_sound()
-        # load vehicle data
-        print("load vehicle data %s" % vehicle_file)
-        self.vehicles = vehicles.Vehicles(vehicle_file, self.ext_feature)
-        self.vehicles.load_data()
-
+    def feature_extraction(self):
         # calculate features
         print("calculate features")
         self.feature_matrix = self.vehicles.calc_features()
