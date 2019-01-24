@@ -79,7 +79,7 @@ class ExtFeatureBase():
 
         # limit frequency range (also exclude DC)
         if cutoff is not None:
-            cutoff_len = int(np.round(self.sig.samp_rate / 2 / cutoff))
+            cutoff_len = int(np.round(self.sig.winsize * cutoff / self.sig.samp_rate))
             features = features[:,1:cutoff_len+1]
 
         # sliding window?
