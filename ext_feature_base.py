@@ -80,7 +80,12 @@ class ExtFeatureBase():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def feature(self, t0, v, winsize=self.ma_len, slide=self.ma_overlap):
+    def feature(self, t0, v, winsize=None, slide=None):
+        if winsize is None:
+            winsize = self.ma_len
+        if slide is None:
+            slide = self.ma_overlap
+        
         # derive feature matrix
         features = self.extract_feature(t0, v)
 
