@@ -12,7 +12,7 @@ import numpy as np
 import importlib
 from sklearn import svm
 from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import RepeatedStratifiedKFold, train_test_split
+from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from imblearn.under_sampling import RandomUnderSampler
 
@@ -25,10 +25,12 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                  ext_feature_class="ext_feature_shift_fft", # feature extraction class file
                  result_file=None, # output filename for results
                  score_file=None,  # output filename for test score
+                 winsize=None,     # window size for each vehicle
                  ):
         super(Estimate, self).__init__()
         self.result_file = result_file
         self.score_file = score_file
+        self.winsize = winsize
 
         self.model = None          # machine learning model
         self.results = None        # results
@@ -60,7 +62,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
     def load_data(self, vehicle_file, wavfile):
         # load sound data
         print("load sound data %s" % wavfile)
-        self.ext_feature = self.ext.ExtFeature(wavfile)
+        self.ext_feature = self.ext.ExtFeature(wavfile, self.winsize)
         self.ext_feature.load_sound()
         # load vehicle data
         print("load vehicle data %s" % vehicle_file)
@@ -114,24 +116,25 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         # label
         y = self.feature_matrix[:,-1]
 
-        # resample data to balance the training/test data
-        print("resample data to balance")
-        uniq, counts = np.unique(y, return_counts=True)
-        counts[:] = np.min(counts)
-        sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=0)
-        x_resamp, y_resamp = sampler.fit_sample(x, y)
-
         # folded validation
-        skf = RepeatedStratifiedKFold(n_splits=folds, n_repeats=repeat)
+        skf = StratifiedKFold(n_splits=folds, shuffle=True)
 
         count = 0
-        for train_idx, test_idx in skf.split(x_resamp, y_resamp):
-            print("iter=%d" % count)
-            score, conf_mat = self.eval(x_resamp[train_idx], y_resamp[train_idx],
-                                        x_resamp[test_idx],  y_resamp[test_idx])
-            self.save_result(conf_mat)
-            self.save_score(score)
-            count += 1
+        for rep in range(repeat):
+            # resample data to balance the training/test data
+            print("resample data to balance")
+            uniq, counts = np.unique(y, return_counts=True)
+            counts[:] = np.min(counts)
+            sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=0)
+            x_resamp, y_resamp = sampler.fit_sample(x, y)
+
+            for train_idx, test_idx in skf.split(x_resamp, y_resamp):
+                print("iter=%d" % count)
+                score, conf_mat = self.eval(x_resamp[train_idx], y_resamp[train_idx],
+                                            x_resamp[test_idx],  y_resamp[test_idx])
+                self.save_result(conf_mat)
+                self.save_score(score)
+                count += 1
 
         return True
 
@@ -194,6 +197,10 @@ def arg_parser():
                     default=1,
                     help="number of repeats of cross-validation",
                     )
+    ap.add_argument("-w", "--winsize", type=float, action="store",
+                    default=4.0,
+                    help="window size for each vehicle",
+                    )
     return ap
 
 #==========================================================================
@@ -201,7 +208,7 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
-    e = Estimate()
+    e = Estimate(winsize=args.winsize)
 
     if args.outfile is not None:
         e.result_file = args.outfile
@@ -213,4 +220,10 @@ if __name__ == '__main__':
 
     # plot confusion matrix
     if args.plot is not None:
-        e.plot_confusion_matrix(args.plot)
+        if args.outfile is None:
+            sys.stderr.print("No result is stored.")
+        else:
+            e.load_result(e.result_file)
+            e.finalize()
+            e.plot_confusion_matrix(args.plot)
+            print("accuracy=%.4f" % e.final_accuracy)
