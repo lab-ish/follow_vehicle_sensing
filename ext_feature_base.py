@@ -107,7 +107,7 @@ class ExtFeatureBase():
         #   phase is more divided into sin/cos to consider phase rotation
         amp   = np.abs(ret)
         phase = np.exp(np.angle(ret)*1j)
-        return np.c_[amp, np.real(phase), np.imag(phase)]
+        return amp
 
     #----------------------------------------------------------------------
     def extract_feature(self, t0, v):

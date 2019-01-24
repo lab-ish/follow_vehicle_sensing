@@ -25,10 +25,12 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                  ext_feature_class="ext_feature_shift_fft", # feature extraction class file
                  result_file=None, # output filename for results
                  score_file=None,  # output filename for test score
+                 winsize=None,     # window size for each vehicle
                  ):
         super(Estimate, self).__init__()
         self.result_file = result_file
         self.score_file = score_file
+        self.winsize = winsize
 
         self.model = None          # machine learning model
         self.results = None        # results
@@ -60,7 +62,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
     def load_data(self, vehicle_file, wavfile):
         # load sound data
         print("load sound data %s" % wavfile)
-        self.ext_feature = self.ext.ExtFeature(wavfile)
+        self.ext_feature = self.ext.ExtFeature(wavfile, self.winsize)
         self.ext_feature.load_sound()
         # load vehicle data
         print("load vehicle data %s" % vehicle_file)
@@ -195,6 +197,10 @@ def arg_parser():
                     default=1,
                     help="number of repeats of cross-validation",
                     )
+    ap.add_argument("-w", "--winsize", type=float, action="store",
+                    default=4.0,
+                    help="window size for each vehicle",
+                    )
     return ap
 
 #==========================================================================
@@ -202,7 +208,7 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
-    e = Estimate()
+    e = Estimate(winsize=args.winsize)
 
     if args.outfile is not None:
         e.result_file = args.outfile
