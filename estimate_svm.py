@@ -30,6 +30,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                  fft_len=None,     # FFT window size
                  fft_shift=None,   # FFT shift length
                  ma_len=None,      # moving average window size
+                 ma_overlap=None,  # flag if moving average windows overlap
                  ):
         super(Estimate, self).__init__()
         self.result_file = result_file
@@ -39,6 +40,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         self.fft_len = fft_len
         self.fft_shift = fft_shift
         self.ma_len = ma_len
+        self.ma_overlap = ma_overlap
 
         self.model = None          # machine learning model
         self.results = None        # results

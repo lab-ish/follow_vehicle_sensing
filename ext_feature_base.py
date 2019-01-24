@@ -13,13 +13,14 @@ from soundmap.wave_data import WaveData
 
 #==========================================================================
 class ExtFeatureBase():
-    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, ma_len=10, D=0.5, L=2.0):
+    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, ma_len=10, ma_overlap=True, D=0.5, L=2.0):
         self.wavfile = wavfile     # vehicle sound .wav file
         self.win     = win         # window size in second
         self.cutoff  = cutoff      # LPF cutoff frequency
         self.fft_len = fft_len     # FFT window size
         self.fft_shift = fft_shift # FFT shift length
         self.ma_len  = ma_len      # moving average window size
+        self.ma_overlap = overlap  # flag if moving average windows overlap
         self.D       = D           # mic separation
         self.L       = L           # distance between road the mic
 
@@ -79,7 +80,7 @@ class ExtFeatureBase():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def feature(self, t0, v, winsize=self.ma_len, slide=True):
+    def feature(self, t0, v, winsize=self.ma_len, slide=self.ma_overlap):
         # derive feature matrix
         features = self.extract_feature(t0, v)
 

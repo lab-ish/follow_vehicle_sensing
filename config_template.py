@@ -43,6 +43,9 @@ fft_shift = 128
 # FFT結果に対する移動平均の長さ [sample] (int)
 ma_len = 10
 
+# FFT結果に対する移動平均のwindow移動を重ねるか
+ma_overlap = True
+
 #----------------------------------------------------------------------
 # fft_shiftのチェック
 if fft_len % fft_shift != 0:
