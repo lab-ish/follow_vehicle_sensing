@@ -8,11 +8,11 @@ SSH="ssh"
 case "$1" in
     up)
 	src=./
-	dst=destpc:/path/to/dir
+	dst=destpc:/path/to/dir/
 	SSH=ssh
 	;;
     down)
-	src=destpc:/path/to/dir
+	src=destpc:/path/to/dir/
 	dst=./
 	SSH=ssh
 	;;
