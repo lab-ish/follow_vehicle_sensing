@@ -26,11 +26,21 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                  result_file=None, # output filename for results
                  score_file=None,  # output filename for test score
                  winsize=None,     # window size for each vehicle
+                 cutoff=None,      # cutoff frequency
+                 fft_len=None,     # FFT window size
+                 fft_shift=None,   # FFT shift length
+                 ma_len=None,      # moving average window size
+                 ma_overlap=None,  # flag if moving average windows overlap
                  ):
         super(Estimate, self).__init__()
         self.result_file = result_file
         self.score_file = score_file
         self.winsize = winsize
+        self.cutoff = cutoff
+        self.fft_len = fft_len
+        self.fft_shift = fft_shift
+        self.ma_len = ma_len
+        self.ma_overlap = ma_overlap
 
         self.model = None          # machine learning model
         self.results = None        # results
@@ -62,7 +72,13 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
     def load_data(self, vehicle_file, wavfile):
         # load sound data
         print("load sound data %s" % wavfile)
-        self.ext_feature = self.ext.ExtFeature(wavfile, self.winsize)
+        self.ext_feature = self.ext.ExtFeature(wavfile=wavfile,
+                                               win=self.winsize,
+                                               cutoff=self.cutoff,
+                                               fft_len=self.fft_len,
+                                               fft_shift=self.fft_shift,
+                                               ma_len=self.ma_len,
+                                               )
         self.ext_feature.load_sound()
         # load vehicle data
         print("load vehicle data %s" % vehicle_file)

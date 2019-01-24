@@ -13,11 +13,16 @@ from soundmap.wave_data import WaveData
 
 #==========================================================================
 class ExtFeatureBase():
-    def __init__(self, wavfile, win=4.0, D=0.5, L=2.0):
-        self.wavfile = wavfile  # vehicle sound .wav file
-        self.win     = win      # window size in second
-        self.D       = D        # mic separation
-        self.L       = L        # distance between road the mic
+    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, ma_len=10, ma_overlap=True, D=0.5, L=2.0):
+        self.wavfile = wavfile     # vehicle sound .wav file
+        self.win     = win         # window size in second
+        self.cutoff  = cutoff      # LPF cutoff frequency
+        self.fft_len = fft_len     # FFT window size
+        self.fft_shift = fft_shift # FFT shift length
+        self.ma_len  = ma_len      # moving average window size
+        self.ma_overlap = overlap  # flag if moving average windows overlap
+        self.D       = D           # mic separation
+        self.L       = L           # distance between road the mic
 
         self.c       = 340.0           # sound speed in air
         self.model   = self.model_func # soundmap model function
@@ -32,6 +37,8 @@ class ExtFeatureBase():
         self.sig = SoundShiftFFT(np.array(wav.left),
                                  np.array(wav.right),
                                  wav.sample_rate,
+                                 self.fft_len,
+                                 self.fft_shift,
                                  )
         self.sig.fft_all()
         del wav
@@ -73,14 +80,21 @@ class ExtFeatureBase():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def feature(self, t0, v, winsize=10, cutoff=3e3, slide=True):
+    def feature(self, t0, v, winsize=None, slide=None):
+        if winsize is None:
+            winsize = self.ma_len
+        if slide is None:
+            slide = self.ma_overlap
+        
         # derive feature matrix
         features = self.extract_feature(t0, v)
 
         # limit frequency range (also exclude DC)
-        if cutoff is not None:
-            cutoff_len = int(np.round(self.sig.winsize * cutoff / self.sig.samp_rate))
+        if self.cutoff is not None:
+            cutoff_len = int(np.round(self.sig.winsize * self.cutoff / self.sig.samp_rate))
             features = features[:,1:cutoff_len+1]
+        else:
+            features = features[:,1:]
 
         # sliding window?
         if slide:
