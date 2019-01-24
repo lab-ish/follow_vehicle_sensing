@@ -5,6 +5,7 @@ lib/
 man/
 local/
 data/
+conf/*.py
 *.pyc
 __pycache__/
 pip-selfcheck.json
