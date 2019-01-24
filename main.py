@@ -74,6 +74,7 @@ if __name__ == '__main__':
                            result_file="%s_result.csv" % (save_base),
                            score_file="%s_score.csv" % (save_base),
                            winsize=config.winsize,
+                           cutoff=config.cutoff,
                            )
 
     # データ読み込み

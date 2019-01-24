@@ -26,11 +26,13 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                  result_file=None, # output filename for results
                  score_file=None,  # output filename for test score
                  winsize=None,     # window size for each vehicle
+                 cutoff=None,      # cutoff frequency
                  ):
         super(Estimate, self).__init__()
         self.result_file = result_file
         self.score_file = score_file
         self.winsize = winsize
+        self.cutoff = cutoff
 
         self.model = None          # machine learning model
         self.results = None        # results
@@ -62,7 +64,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
     def load_data(self, vehicle_file, wavfile):
         # load sound data
         print("load sound data %s" % wavfile)
-        self.ext_feature = self.ext.ExtFeature(wavfile, self.winsize)
+        self.ext_feature = self.ext.ExtFeature(wavfile, self.winsize, self.cutoff)
         self.ext_feature.load_sound()
         # load vehicle data
         print("load vehicle data %s" % vehicle_file)

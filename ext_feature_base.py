@@ -13,9 +13,10 @@ from soundmap.wave_data import WaveData
 
 #==========================================================================
 class ExtFeatureBase():
-    def __init__(self, wavfile, win=4.0, D=0.5, L=2.0):
+    def __init__(self, wavfile, win=4.0, cutoff=None, D=0.5, L=2.0):
         self.wavfile = wavfile  # vehicle sound .wav file
         self.win     = win      # window size in second
+        self.cutoff  = cutoff   # LPF cutoff frequency
         self.D       = D        # mic separation
         self.L       = L        # distance between road the mic
 
@@ -73,13 +74,13 @@ class ExtFeatureBase():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def feature(self, t0, v, winsize=10, cutoff=3e3, slide=True):
+    def feature(self, t0, v, winsize=10, slide=True):
         # derive feature matrix
         features = self.extract_feature(t0, v)
 
         # limit frequency range (also exclude DC)
-        if cutoff is not None:
-            cutoff_len = int(np.round(self.sig.winsize * cutoff / self.sig.samp_rate))
+        if self.cutoff is not None:
+            cutoff_len = int(np.round(self.sig.winsize * self.cutoff / self.sig.samp_rate))
             features = features[:,1:cutoff_len+1]
 
         # sliding window?

@@ -30,6 +30,7 @@ repeats = 1
 plot = True
 
 # LPFのカットオフ周波数 [Hz]
+#   Noneの場合は全周波数
 cutoff = 3e3
 
 # FFT点数 (int)
