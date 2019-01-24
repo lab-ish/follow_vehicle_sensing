@@ -75,38 +75,39 @@ class ExtFeatureBase():
     #----------------------------------------------------------------------
     def feature(self, t0, v, winsize=10, cutoff=3e3, slide=True):
         # derive feature matrix
-        feature_matrix = self.extract_feature(t0, v)
+        features = self.extract_feature(t0, v)
 
         # limit frequency range (also exclude DC)
         if cutoff is not None:
             cutoff_len = int(np.round(self.sig.samp_rate / 2 / cutoff))
-            feature_matrix = feature_matrix[:,1:cutoff_len+1]
+            features = features[:,1:cutoff_len+1]
 
         # sliding window?
         if slide:
             # matrix for storing results
-            ret = np.empty([feature_matrix.shape[0]-winsize+1, feature_matrix.shape[1]],
+            ret = np.empty([features.shape[0]-winsize+1, features.shape[1]],
                            dtype=np.complex)
             # moving average window
             ma_win = np.ones(winsize) / winsize
-            # moving average for each column (freq) of feature_matrix
-            for i in range(feature_matrix.shape[1]):
-                ret[:,i] = np.convolve(np.real(feature_matrix[:,i]), ma_win, mode='valid') \
-                  + np.convolve(np.imag(feature_matrix[:,i]), ma_win, mode='valid')*1j
+            # moving average for each column (freq) of features
+            for i in range(features.shape[1]):
+                ret[:,i] = np.convolve(np.real(features[:,i]), ma_win, mode='valid') \
+                  + np.convolve(np.imag(features[:,i]), ma_win, mode='valid')*1j
         else:
             # divide each freq component in winsize and average
             # cut the last part of residuals
-            cut = feature_matrix.shape[0] % winsize
+            cut = features.shape[0] % winsize
             if cut != 0:
-                feature_matrix = feature_matrix[0:-cut,:]
+                features = features[0:-cut,:]
             # average the each divided data
-            ret = np.mean(feature_matrix.reshape(-1,winsize,feature_matrix.shape[1]),
+            ret = np.mean(features.reshape(-1,winsize,features.shape[1]),
                           axis=1)
 
-        # calculate amplitude/phase difference
-        diff = ret[0:-1,:] / ret[1:,:]
-
-        return np.c_[np.abs(diff), np.angle(diff)]
+        # split amplitude and phase
+        #   phase is more divided into sin/cos to consider phase rotation
+        amp   = np.abs(ret)
+        phase = np.exp(np.angle(ret)*1j)
+        return np.c_[amp, np.real(phase), np.imag(phase)]
 
     #----------------------------------------------------------------------
     def extract_feature(self, t0, v):
