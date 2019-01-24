@@ -15,8 +15,6 @@ import datetime
 
 import vehicles
 
-OUTDIR="results"
-
 #======================================================================
 # 引数処理
 def arg_parser():
@@ -44,13 +42,6 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
-    if not os.path.exists(OUTDIR):
-        os.makedirs(OUTDIR)
-
-    # 現在時刻を取得し、データファイルのベースとする
-    now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
-    save_base = OUTDIR + "/" + now
-
     # 設定ファイルのパスをimport pathに追加
     base_path = os.path.dirname(args.conffile)
     base_file, base_ext = os.path.splitext(os.path.basename(args.conffile))
@@ -61,6 +52,13 @@ if __name__ == '__main__':
     except ImportError:
         sys.stderr.write('Error: Ignore missing config file "' + args.conffile + '"\n')
         sys.exit(1)
+
+    if not os.path.exists(config.outdir):
+        os.makedirs(config.outdir)
+
+    # 現在時刻を取得し、データファイルのベースとする
+    now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
+    save_base = config.outdir + "/" + now
 
     print(args.conffile + " saved as " + save_base + "_config.py")
 
