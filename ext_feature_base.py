@@ -13,14 +13,15 @@ from soundmap.wave_data import WaveData
 
 #==========================================================================
 class ExtFeatureBase():
-    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, D=0.5, L=2.0):
-        self.wavfile = wavfile  # vehicle sound .wav file
-        self.win     = win      # window size in second
-        self.cutoff  = cutoff   # LPF cutoff frequency
-        self.fft_len = fft_len  # FFT window size
+    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, ma_len=10, D=0.5, L=2.0):
+        self.wavfile = wavfile     # vehicle sound .wav file
+        self.win     = win         # window size in second
+        self.cutoff  = cutoff      # LPF cutoff frequency
+        self.fft_len = fft_len     # FFT window size
         self.fft_shift = fft_shift # FFT shift length
-        self.D       = D        # mic separation
-        self.L       = L        # distance between road the mic
+        self.ma_len  = ma_len      # moving average window size
+        self.D       = D           # mic separation
+        self.L       = L           # distance between road the mic
 
         self.c       = 340.0           # sound speed in air
         self.model   = self.model_func # soundmap model function
@@ -78,7 +79,7 @@ class ExtFeatureBase():
         return (time_idx, t0_offset)
 
     #----------------------------------------------------------------------
-    def feature(self, t0, v, winsize=10, slide=True):
+    def feature(self, t0, v, winsize=self.ma_len, slide=True):
         # derive feature matrix
         features = self.extract_feature(t0, v)
 
@@ -86,6 +87,8 @@ class ExtFeatureBase():
         if self.cutoff is not None:
             cutoff_len = int(np.round(self.sig.winsize * self.cutoff / self.sig.samp_rate))
             features = features[:,1:cutoff_len+1]
+        else:
+            features = features[:,1:]
 
         # sliding window?
         if slide:

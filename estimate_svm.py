@@ -29,6 +29,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                  cutoff=None,      # cutoff frequency
                  fft_len=None,     # FFT window size
                  fft_shift=None,   # FFT shift length
+                 ma_len=None,      # moving average window size
                  ):
         super(Estimate, self).__init__()
         self.result_file = result_file
@@ -37,6 +38,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         self.cutoff = cutoff
         self.fft_len = fft_len
         self.fft_shift = fft_shift
+        self.ma_len = ma_len
 
         self.model = None          # machine learning model
         self.results = None        # results
@@ -73,6 +75,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
                                                cutoff=self.cutoff,
                                                fft_len=self.fft_len,
                                                fft_shift=self.fft_shift,
+                                               ma_len=self.ma_len,
                                                )
         self.ext_feature.load_sound()
         # load vehicle data
