@@ -33,7 +33,6 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         self.score_file  = score_file
 
         self.model       = None # machine learning model
-        self.results     = None # results
         self.classes     = None # number of classes (labels)
         # feature matrix: features, label (= vehicle type id)
         self.feature_matrix = None
@@ -181,22 +180,40 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
-    e = Estimate(winsize=args.winsize)
+    import vehicles
+    import ext_feature_single
 
-    if args.outfile is not None:
-        e.result_file = args.outfile
-    if args.scorefile is not None:
-        e.score_file = args.scorefile
+    # feature extraction class instance
+    ext = ext_feature_single.ExtFeature(
+        win        = args.winsize,
+        cutoff     = 3e3,
+        )
+    # load sound data
+    ext.load_sound(config.wavfile)
 
-    e.load_data(args.vehicle_info, args.wavfile)
+    # vehicle info class instance
+    veh = vehicles.Vehicles(args.vehicle_info, ext)
+    print("load vehicle data %s" % config.vehicle_info)
+    veh.load_data()
+
+    # estimation class instance
+    e = Estimate(
+        ext_feature = ext,
+        vehicles    = veh,
+        result_file = args.outfile,
+        score_file  = args.scorefile,
+        )
+    e.feature_extraction()
+
+    # estimate
     e.cross_validation(folds=args.folds, repeat=args.repeats)
 
-    # plot confusion matrix
-    if args.plot is not None:
-        if args.outfile is None:
-            sys.stderr.print("No result is stored.")
-        else:
-            e.load_result(e.result_file)
-            e.finalize()
+    # finalize results
+    if args.outfile is not None:
+        e.load_result(e.result_file)
+        e.finalize()
+        print("accuracy=%.4f" % e.final_accuracy)
+
+        # plot confusion matrix
+        if args.plot is not None:
             e.plot_confusion_matrix(args.plot)
-            print("accuracy=%.4f" % e.final_accuracy)
