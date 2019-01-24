@@ -189,11 +189,12 @@ if __name__ == '__main__':
         cutoff     = 3e3,
         )
     # load sound data
-    ext.load_sound(config.wavfile)
+    print("load sound data %s" % args.wavfile)
+    ext.load_sound(args.wavfile)
 
     # vehicle info class instance
     veh = vehicles.Vehicles(args.vehicle_info, ext)
-    print("load vehicle data %s" % config.vehicle_info)
+    print("load vehicle data %s" % args.vehicle_info)
     veh.load_data()
 
     # estimation class instance

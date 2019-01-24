@@ -28,7 +28,7 @@ class ExtFeatureBase():
         self.fft_len    = fft_len
         self.fft_shift  = fft_shift
         self.ma_len     = ma_len
-        self.ma_overlap = overlap
+        self.ma_overlap = ma_overlap
         self.D          = D
         self.L          = L
 
