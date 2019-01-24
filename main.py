@@ -13,7 +13,7 @@ import shutil
 import importlib
 import datetime
 
-OUTDIR="results"
+import vehicles
 
 #======================================================================
 # 引数処理
@@ -27,9 +27,9 @@ def arg_parser():
     return ap
 
 #----------------------------------------------------------------------
-# 推定用クラスを読み込み
-def load_est_class(class_file):
-    # classファイルのをimport pathに追加
+# クラスファイルを読み込み
+def load_class(class_file):
+    # classファイルのpathをimport pathに追加
     base_path = os.path.dirname(class_file)
     base_file, base_ext = os.path.splitext(os.path.basename(class_file))
     sys.path.append(base_path)
@@ -42,13 +42,6 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
-    if not os.path.exists(OUTDIR):
-        os.makedirs(OUTDIR)
-
-    # 現在時刻を取得し、データファイルのベースとする
-    now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
-    save_base = OUTDIR + "/" + now
-
     # 設定ファイルのパスをimport pathに追加
     base_path = os.path.dirname(args.conffile)
     base_file, base_ext = os.path.splitext(os.path.basename(args.conffile))
@@ -60,27 +53,51 @@ if __name__ == '__main__':
         sys.stderr.write('Error: Ignore missing config file "' + args.conffile + '"\n')
         sys.exit(1)
 
+    if not os.path.exists(config.outdir):
+        os.makedirs(config.outdir)
+
+    # 現在時刻を取得し、データファイルのベースとする
+    now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
+    save_base = config.outdir + "/" + now
+
     print(args.conffile + " saved as " + save_base + "_config.py")
 
     # 設定ファイルをコピーしておく
     shutil.copy(args.conffile, save_base + "_config.py")
 
     #--------------------------------------------------
+    # 特徴量抽出クラスを読み込み
+    extf_class = load_class(config.ext_feature_class)
     # 推定クラスを読み込み
-    est_class = load_est_class(config.est_class)
+    est_class  = load_class(config.est_class)
+
+    # 特徴量抽出クラスをインスタンス化
+    ext = extf_class.ExtFeature(win        = config.winsize,
+                                cutoff     = config.cutoff,
+                                fft_len    = config.fft_len,
+                                fft_shift  = config.fft_shift,
+                                ma_len     = config.ma_len,
+                                ma_overlap = config.ma_overlap,
+                                )
+    # 車両走行音データを読み込み
+    print("load sound data %s" % config.wavfile)
+    ext.load_sound(config.wavfile)
+
+    # 車両情報クラスをインスタンス化
+    veh = vehicles.Vehicles(config.vehicle_info, ext)
+    # 車両情報を読み込み
+    print("load vehicle data %s" % config.vehicle_info)
+    veh.load_data()
 
     # 推定クラスをインスタンス化
-    e = est_class.Estimate(ext_feature_class=config.ext_feature_class,
-                           result_file="%s_result.csv" % (save_base),
-                           score_file="%s_score.csv" % (save_base),
-                           winsize=config.winsize,
-                           cutoff=config.cutoff,
-                           fft_len=config.fft_len,
-                           fft_shift=config.fft_shift,
+    e = est_class.Estimate(ext_feature = ext,
+                           vehicles    = veh,
+                           result_file = "%s_result.csv" % (save_base),
+                           score_file  = "%s_score.csv" % (save_base),
                            )
 
-    # データ読み込み
-    e.load_data(config.vehicle_info, config.wavfile)
+    # 特徴量抽出
+    e.feature_extraction()
 
     # 推定
     e.cross_validation(folds=config.folds, repeat=config.repeats)

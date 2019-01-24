@@ -13,25 +13,33 @@ from soundmap.wave_data import WaveData
 
 #==========================================================================
 class ExtFeatureBase():
-    def __init__(self, wavfile, win=4.0, cutoff=None, fft_len=512, fft_shift=128, ma_len=10, ma_overlap=True, D=0.5, L=2.0):
-        self.wavfile = wavfile     # vehicle sound .wav file
-        self.win     = win         # window size in second
-        self.cutoff  = cutoff      # LPF cutoff frequency
-        self.fft_len = fft_len     # FFT window size
-        self.fft_shift = fft_shift # FFT shift length
-        self.ma_len  = ma_len      # moving average window size
-        self.ma_overlap = overlap  # flag if moving average windows overlap
-        self.D       = D           # mic separation
-        self.L       = L           # distance between road the mic
+    def __init__(self,
+                 win=4.0,         # window size for each vehicle in second
+                 cutoff=None,     # LPF cutoff frequency
+                 fft_len=512,     # FFT window size
+                 fft_shift=128,   # FFT shift lenggth
+                 ma_len=10,       # moving average window size
+                 ma_overlap=True, # flag if moving average windows overlap
+                 D=0.5,           # mic separation
+                 L=2.0,           # distance between road the mic
+                 ):
+        self.win        = win
+        self.cutoff     = cutoff
+        self.fft_len    = fft_len
+        self.fft_shift  = fft_shift
+        self.ma_len     = ma_len
+        self.ma_overlap = ma_overlap
+        self.D          = D
+        self.L          = L
 
-        self.c       = 340.0           # sound speed in air
-        self.model   = self.model_func # soundmap model function
+        self.c     = 340.0           # sound speed in air
+        self.model = self.model_func # soundmap model function
         return
 
     #----------------------------------------------------------------------
-    def load_sound(self):
+    def load_sound(self, wavfile):
         # load wav file
-        wav = WaveData(self.wavfile, decimate=False)
+        wav = WaveData(wavfile, decimate=False)
 
         # FFT
         self.sig = SoundShiftFFT(np.array(wav.left),

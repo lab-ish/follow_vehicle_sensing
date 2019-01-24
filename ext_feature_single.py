@@ -12,9 +12,6 @@ from ext_feature_base import ExtFeatureBase
 
 #==========================================================================
 class ExtFeature(ExtFeatureBase):
-    def __init__(self, wavfile, win=4.0, D=0.5, L=2.0):
-        super(ExtFeature, self).__init__(wavfile, win, D, L)
-        return
 
     #----------------------------------------------------------------------
     # feature extraction:

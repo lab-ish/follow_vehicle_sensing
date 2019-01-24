@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# 出力先ディレクトリ
+outdir = "results"
+
 # 推定クラスのファイル名
 est_class = "estimate_svm.py"
 
