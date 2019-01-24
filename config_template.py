@@ -45,5 +45,5 @@ ma_len = 10
 
 #----------------------------------------------------------------------
 # fft_shiftのチェック
-if fft_len // fft_shift != 0:
+if fft_len % fft_shift != 0:
     raise ValueError
