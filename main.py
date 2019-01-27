@@ -24,6 +24,10 @@ def arg_parser():
                     default="config.py",
                     help="config file",
                     )
+    ap.add_argument("-b", "--basename", type=str, action="store",
+                    default=None,
+                    help="base name for output files",
+                    )
     return ap
 
 #----------------------------------------------------------------------
@@ -56,9 +60,11 @@ if __name__ == '__main__':
     if not os.path.exists(config.outdir):
         os.makedirs(config.outdir)
 
-    # 現在時刻を取得し、データファイルのベースとする
-    now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
-    save_base = config.outdir + "/" + now
+    # 指定がなければ現在時刻を取得して出力ファイルのベースとする
+    save_base = args.base
+    if save_base is None:
+        now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
+        save_base = config.outdir + "/" + now
 
     print(args.conffile + " saved as " + save_base + "_config.py")
 
