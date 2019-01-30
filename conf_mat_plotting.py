@@ -29,7 +29,7 @@ class ConfMatPlotting():
         return (self.final_conf_matrix, self.final_accuracy)
 
     #----------------------------------------------------------------------
-    def plot_confusion_matrix(self, plot_file=None, fontsize=14):
+    def plot_confusion_matrix(self, plot_file=None, fontsize=14, type_ids=None):
         fig = plt.figure()
 
         if plot_file is not None:
@@ -45,14 +45,20 @@ class ConfMatPlotting():
                 plt.rcParams['pdf.use14corefonts'] = True
                 plt.rcParams['text.usetex'] = True
 
+        labels = "auto"
+        if type_ids is not None:
+            labels = np.array(sorted(type_ids.items()))[:,1]
+
         sns.heatmap(self.final_conf_matrix,
                     cmap="Blues",
                     annot=True,
                     fmt="d",
                     cbar=False,
+                    xticklabels=labels,
+                    yticklabels=labels,
                     )
-        plt.xlabel('Estimated Area')
-        plt.ylabel('Actual Area')
+        plt.xlabel('Estimated Type')
+        plt.ylabel('Actual Type')
 
         if plot_file is None:
             plt.show()
