@@ -128,7 +128,7 @@ class ExtFeatureBase():
         # split amplitude and phase
         #   phase is more divided into sin/cos to consider phase rotation
         amp   = np.abs(ret)
-        phase = np.exp(np.angle(ret)*1j)
+        # phase = np.exp(np.angle(ret)*1j)
         return amp
 
     #----------------------------------------------------------------------
