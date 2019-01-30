@@ -23,13 +23,13 @@ est_class = ["estimate_svm.py"]
 
 # 特徴量抽出クラスのファイル名
 ext_feature_class = [
-    "ext_feature_shift_fft.py",
-    "ext_feature_single.py"
+    'ext_feature_shift_fft.py',
+    'ext_feature_single.py',
     ]
 
 # window size in second (float)
 #   車両通過時を基準として前後合計何秒分の音を取り出すか
-winsize = [1.0, 2.0, 4.0, 6.0]
+winsize = [1.0, 2.0, 4.0]
 
 # 検出された車両情報が格納されているTSVファイル名
 vehicle_info = ["../data/MAH00092_follow_vehicle_sensing_L2_notruck.tsv"]
@@ -64,4 +64,4 @@ fft_shift = [128, 256, 512, 1024, 2048]
 ma_len = [10, 20, 30]
 
 # FFT結果に対する移動平均のwindow移動を重ねるか
-ma_overlap = [True, False]
+ma_overlap = [True]

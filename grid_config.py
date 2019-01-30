@@ -11,12 +11,20 @@ import sys
 import importlib
 import re
 import datetime
+import itertools
 
 #==========================================================================
 class GridConfig():
-    def __init__(self, config_out, param_out=None):
+    def __init__(self, config_out, param_out, base=None):
         self.config_out = config_out # 出力configファイル名（上書き）
-        self.param_out = param_out   # パラメータの組み合わせの保存先（追記, Noneなら出力しない）
+        self.param_out = param_out   # パラメータの組み合わせの保存先（上書き）
+
+        # ベースネーム
+        self.save_base = base
+        if self.save_base is None:
+            now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
+            self.save_base = now
+
         return
 
     #----------------------------------------------------------------------
@@ -39,17 +47,47 @@ class GridConfig():
         for param_name in self.param_names:
             self.param_set[param_name] = self.param_file.__dict__[param_name]
             self.param_len[param_name] = len(self.param_set[param_name])
+
         return
 
     #----------------------------------------------------------------------
     def exec_grid(self):
+        # パラメータが取る値のリストを取得
+        param_values = [self.param_set[x] for x in self.param_names]
+        # パラメータの組み合わせを生成
+        param_combs = itertools.product(*param_values)
+        # 制約を満たさないものは除外
+        param_combs = filter(lambda x: self.constraints(dict(zip(self.param_names, x))),
+                             param_combs)
+
+        # 各組み合わせで評価を実行
+        with open(self.param_out, "w") as f:
+            f.write("# config_file,%s\n" % ",".join(self.param_names))
+        cnt = 0
+        for p in param_combs:
+            param = dict(zip(self.param_names, p))
+
+            # パラメータの組み合わせでconfigを生成
+            self.generate_single_config(param)
+
+            # パラメータの組み合わせを記録
+            with open(self.param_out, "a") as f:
+                f.write(self.save_base + "_%d.py," % cnt)
+                f.write(",".join(map(lambda x: str(x), p)) + "\n")
+
+            cnt += 1
+
         return
 
     #----------------------------------------------------------------------
     def generate_single_config(self, param):
+        # 各パラメータを書き込んだconfigを生成
         with open(self.config_out, "w") as f:
-            pass
-
+            for k,v in param.items():
+                if type(v) is str:
+                    f.write('%s = "%s"\n' % (k, v.replace('"', '\\"')))
+                else:
+                    f.write('%s = %s\n' % (k, str(v)))
         return
 
     #----------------------------------------------------------------------
@@ -71,16 +109,18 @@ def arg_parser():
     ap.add_argument("param_file", type=str, action="store",
                     help="input file including parameter set",
                     )
+    ap.add_argument("param_out", type=str, action="store",
+                    help="output file name storing parameter combination set",
+                    )
     ap.add_argument("-c", "--config_out", type=str, action="store",
                     default=None,
                     help="output config file name",
                     )
-    ap.add_argument("-o", "--param_out", type=str, action="store",
+    ap.add_argument("-b", "--base", type=str, action="store",
                     default=None,
-                    help="output file name storing parameter combination set",
+                    help="base name for output files",
                     )
     return ap
-
 
 #==========================================================================
 if __name__ == '__main__':
@@ -90,7 +130,7 @@ if __name__ == '__main__':
     # grid searchクラスをインスタンス化
     if args.config_out is None:
         args.config_out = datetime.datetime.today().strftime("config_%s.py")
-    g = GridConfig(args.config_out, args.param_out)
+    g = GridConfig(args.config_out, args.param_out, args.base)
 
     # パラメータ情報を読み込み
     g.load_param_set(args.param_file)
