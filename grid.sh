@@ -36,6 +36,6 @@ echo "$conf_files" \
     echo "--------------------------------------------------"
     echo "grid: $cnt/$max_cnt"
     date
-    cnt=`expr $cnt + 1`
     python3 main.py -c $f -b ${now}_${cnt}
+    cnt=`expr $cnt + 1`
 done
