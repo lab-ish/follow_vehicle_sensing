@@ -46,13 +46,9 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
-    # 設定ファイルのパスをimport pathに追加
-    base_path = os.path.dirname(args.conffile)
-    base_file, base_ext = os.path.splitext(os.path.basename(args.conffile))
-    sys.path.append(base_path)
-
+    # 設定ファイル読み込み
     try:
-        config = importlib.import_module(base_file)
+        config = load_class(args.conffile)
     except ImportError:
         sys.stderr.write('Error: Ignore missing config file "' + args.conffile + '"\n')
         sys.exit(1)
@@ -61,10 +57,10 @@ if __name__ == '__main__':
         os.makedirs(config.outdir)
 
     # 指定がなければ現在時刻を取得して出力ファイルのベースとする
+    now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
+    if args.base is None:
+        args.base = now
     save_base = config.outdir + "/" + args.base
-    if save_base is None:
-        now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
-        save_base = config.outdir + "/" + now
 
     print(args.conffile + " saved as " + save_base + "_config.py")
 
