@@ -21,7 +21,7 @@ param_csv=$1
 
 
 #----------------------------------------------------------------------
-now=$(date +%Y%M%d_%H%M)
+now=$(date +%Y%m%d_%H%M)
 
 # 2列目がconfigファイル情報
 conf_files=$(cat $param_csv \
