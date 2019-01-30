@@ -124,4 +124,4 @@ if __name__ == '__main__':
         plotfile = "%s_result.png" % (save_base)
         if type(config.plot) is str:
             plotfile = config.plot
-        e.plot_confusion_matrix(plotfile)
+        e.plot_confusion_matrix(plot_file=plotfile, type_ids=veh.type_ids)
