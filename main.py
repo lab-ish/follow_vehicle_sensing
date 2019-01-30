@@ -91,6 +91,16 @@ if __name__ == '__main__':
     print("load vehicle data %s" % config.vehicle_info)
     veh.load_data()
 
+    # 車両種別と車両種別IDの対応を設定ファイルに追記
+    with open(save_base + "_config.py", "a") as f:
+        f.write("\n")
+        f.write("#======================================================================\n")
+        f.write("# Lines below are automatically added by main.py\n")
+        f.write("vehicle_types = {\n")
+        for type_id in veh.type_ids.keys():
+            f.write("  %d: '%s',\n" % (type_id, veh.type_ids[type_id]))
+        f.write("}\n")
+
     # 推定クラスをインスタンス化
     e = est_class.Estimate(ext_feature = ext,
                            vehicles    = veh,
