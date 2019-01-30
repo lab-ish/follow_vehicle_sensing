@@ -116,7 +116,7 @@ if __name__ == '__main__':
     c.finalize()
 
     # confusion matrixをプロットして保存
-    if args.no_plot:
+    if not args.no_plot:
         if args.plot is not None:
             if args.fontsize is not None:
                 c.plot_confusion_matrix(args.plot, fontsize=args.fontsize)
