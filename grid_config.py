@@ -16,21 +16,9 @@ import subprocess
 
 #==========================================================================
 class GridConfig():
-    def __init__(self, config_out=None, base=None, param_dir=None):
-        self.config_out = config_out # 出力configファイル名（上書き）
-        if self.config_out is None:
-            self.config_out = datetime.datetime.today().strftime("config_%s.py")
-
-        # ベースネーム
-        self.save_base = base
-        if self.save_base is None:
-            now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
-            self.save_base = now
-
-        # パラメータの組み合わせの保存先（上書き）
-        if param_dir is None:
-            param_dir = ""
-        self.param_out = param_dir + "/" + self.save_base + "_grid.csv"
+    def __init__(self, config_dir, param_out):
+        self.config_dir = config_dir # config出力先ディレクトリ
+        self.param_out = param_out   # parameter組み合わせ情報出力先ファイル名
 
         return
 
@@ -72,33 +60,21 @@ class GridConfig():
     def exec_grid(self):
         param_combs = self.generate_combinations()
 
-        # 各組み合わせで評価を実行
-        num_iter = len(param_combs) - 1
+        # 各組み合わせのconfigを出力
         with open(self.param_out, "w") as f:
-            f.write("# config_file,%s\n" % ",".join(self.param_names))
+            f.write("# cnt,conf_file,%s\n" % ",".join(self.param_names))
         cnt = 0
         for p in param_combs:
-            print("grid %d/%d" % (cnt, num_iter))
             param = dict(zip(self.param_names, p))
 
-            # パラメータの組み合わせでconfigを生成
-            self.generate_single_config(self.config_out, param)
-
             # パラメータの組み合わせを記録
+            conf_out = self.config_dir + "/%05d.py" % cnt
             with open(self.param_out, "a") as f:
-                f.write(self.save_base + "_%d.py," % cnt)
+                f.write("%d,%s," % (cnt, conf_out))
                 f.write(",".join(map(lambda x: str(x), p)) + "\n")
 
-            # 実行
-            try:
-                out = subprocess.check_call([
-                    "python3",
-                    "main.py",
-                    "-c", self.config_out,
-                    "-b", self.save_base + "_%d" % cnt
-                    ])
-            except subprocess.CalledProcessError as ex:
-                sys.stderr.write(ex.output + "\n")
+            # パラメータの組み合わせのconfigを生成
+            self.generate_single_config(conf_out, param)
 
             cnt += 1
         return
@@ -136,17 +112,13 @@ def arg_parser():
     ap.add_argument("-t", "--test", action="store_true",
                     help="print the number of combinations and exit",
                     )
-    ap.add_argument("-p", "--param_dir", type=str, action="store",
-                    default=None,
-                    help="output directory of parameter combinations info",
+    ap.add_argument("-p", "--param_out", type=str, action="store",
+                    default="params.csv",
+                    help="output file including parameter combinations info (default: params.csv)",
                     )
-    ap.add_argument("-c", "--config_out", type=str, action="store",
-                    default=None,
-                    help="output config file name (default example: config_1548849936.py)",
-                    )
-    ap.add_argument("-b", "--base", type=str, action="store",
-                    default=None,
-                    help="base name for output files (default example: 20190124_1855)",
+    ap.add_argument("-c", "--conf_dir", type=str, action="store",
+                    default="conf",
+                    help="config output directory (default: conf)",
                     )
     return ap
 
@@ -155,8 +127,12 @@ if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
 
+    # config出力先がなければ作成
+    if not os.path.exists(args.conf_dir):
+        os.makedirs(args.conf_dir)
+
     # grid searchクラスをインスタンス化
-    g = GridConfig(args.config_out, args.base, args.param_dir)
+    g = GridConfig(args.conf_dir, args.param_out)
 
     # パラメータ情報を読み込み
     g.load_param_set(args.param_file)

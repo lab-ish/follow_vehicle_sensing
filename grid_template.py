@@ -23,13 +23,13 @@ est_class = ["estimate_svm.py"]
 
 # 特徴量抽出クラスのファイル名
 ext_feature_class = [
-    'ext_feature_shift_fft.py',
     'ext_feature_single.py',
+    'ext_feature_shift_fft.py',
     ]
 
 # window size in second (float)
 #   車両通過時を基準として前後合計何秒分の音を取り出すか
-winsize = [1.0, 2.0, 4.0]
+winsize = [2.0, 4.0]
 
 # 検出された車両情報が格納されているTSVファイル名
 vehicle_info = ["../data/MAH00092_follow_vehicle_sensing_L2_notruck.tsv"]
@@ -51,14 +51,14 @@ plot = [True]
 
 # LPFのカットオフ周波数 [Hz]
 #   Noneの場合は全周波数
-cutoff = [1e3, 3e3, 5e3, 8e3]
+cutoff = [1e3, 2e3, 3e3, 4e3]
 
 # FFT点数 (int)
-fft_len = [512, 1024, 2048, 4096]
+fft_len = [2048, 4096]
 
 # FFTシフトサイズ (int)
 #   FFT点数の約数とすること
-fft_shift = [128, 256, 512, 1024, 2048]
+fft_shift = [256, 512]
 
 # FFT結果に対する移動平均の長さ [sample] (int)
 ma_len = [10, 20, 30]
