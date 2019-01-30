@@ -61,7 +61,7 @@ if __name__ == '__main__':
         os.makedirs(config.outdir)
 
     # 指定がなければ現在時刻を取得して出力ファイルのベースとする
-    save_base = args.base
+    save_base = config.outdir + "/" + args.base
     if save_base is None:
         now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
         save_base = config.outdir + "/" + now
