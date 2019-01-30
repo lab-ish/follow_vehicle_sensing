@@ -12,7 +12,6 @@ import importlib
 import re
 import datetime
 import itertools
-import subprocess
 
 #==========================================================================
 class GridConfig():
