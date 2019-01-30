@@ -1,5 +1,9 @@
 #!/bin/sh
 
+LANG=C
+LC_ALL=C
+
+
 # 使用法
 usage() {
     echo "$0 <parameter_info.csv>"
@@ -29,8 +33,9 @@ max_cnt=$(tail -1 $param_csv \
 cnt=0
 echo "$conf_files" \
     | while read f; do
-    echo "------------------------------"
+    echo "--------------------------------------------------"
     echo "grid: $cnt/$max_cnt"
+    date
     cnt=`expr $cnt + 1`
-    time python3 main.py -c $f -b ${now}_${cnt}
+    python3 main.py -c $f -b ${now}_${cnt}
 done
