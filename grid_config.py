@@ -12,6 +12,7 @@ import importlib
 import re
 import datetime
 import itertools
+import subprocess
 
 #==========================================================================
 class GridConfig():
@@ -58,31 +59,44 @@ class GridConfig():
         param_combs = itertools.product(*param_values)
         # 制約を満たさないものは除外
         param_combs = filter(lambda x: self.constraints(dict(zip(self.param_names, x))),
-                             param_combs)
+                             list(param_combs))
+        param_combs = list(param_combs)
 
         # 各組み合わせで評価を実行
+        num_iter = len(param_combs)
         with open(self.param_out, "w") as f:
             f.write("# config_file,%s\n" % ",".join(self.param_names))
-        cnt = 0
+        cnt = 1
         for p in param_combs:
+            print("%d/%d" % (cnt, num_iter))
             param = dict(zip(self.param_names, p))
 
             # パラメータの組み合わせでconfigを生成
-            self.generate_single_config(param)
+            self.generate_single_config(self.config_out, param)
 
             # パラメータの組み合わせを記録
             with open(self.param_out, "a") as f:
                 f.write(self.save_base + "_%d.py," % cnt)
                 f.write(",".join(map(lambda x: str(x), p)) + "\n")
 
-            cnt += 1
+            # 実行
+            try:
+                out = subprocess.check_call([
+                    "python3",
+                    "main.py",
+                    "-c", self.config_out,
+                    "-b", self.save_base + "_%d" % cnt
+                    ])
+            except subprocess.CalledProcessError as ex:
+                sys.stderr.write(ex.output + "\n")
 
+            cnt += 1
         return
 
     #----------------------------------------------------------------------
-    def generate_single_config(self, param):
+    def generate_single_config(self, conffile, param):
         # 各パラメータを書き込んだconfigを生成
-        with open(self.config_out, "w") as f:
+        with open(conffile, "w") as f:
             for k,v in param.items():
                 if type(v) is str:
                     f.write('%s = "%s"\n' % (k, v.replace('"', '\\"')))
@@ -134,3 +148,6 @@ if __name__ == '__main__':
 
     # パラメータ情報を読み込み
     g.load_param_set(args.param_file)
+
+    # グリッド実行
+    g.exec_grid()
