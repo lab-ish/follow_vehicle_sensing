@@ -9,9 +9,11 @@
 # 
 
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import importlib
 
 #==========================================================================
 class ConfMatPlotting():
@@ -106,12 +108,34 @@ def arg_parser():
                     default=None,
                     help="load score file",
                     )
+    ap.add_argument("-c", "--conf_file", type=str, action="store",
+                    default=None,
+                    help="config file name to load type/type_id association",
+                    )
     return ap
+
+#----------------------------------------------------------------------
+# クラスファイルを読み込み
+def load_class(class_file):
+    # classファイルのpathをimport pathに追加
+    base_path = os.path.dirname(class_file)
+    base_file, base_ext = os.path.splitext(os.path.basename(class_file))
+    sys.path.append(base_path)
+    base_name = base_file.split("_")[:2]
+
+    return importlib.import_module(base_file)
 
 #==========================================================================
 if __name__ == '__main__':
     parser = arg_parser()
     args = parser.parse_args()
+
+    # 設定ファイルが指定されている場合は読み込み
+    type_ids = None
+    if args.conf_file is not None:
+        config = load_class(args.conf_file)
+        if 'vehicle_types' in vars(config).keys():
+            type_ids = config.vehicle_types
 
     c = ConfMatPlotting()
 
@@ -125,10 +149,19 @@ if __name__ == '__main__':
     if not args.no_plot:
         if args.plot is not None:
             if args.fontsize is not None:
-                c.plot_confusion_matrix(args.plot, fontsize=args.fontsize)
+                c.plot_confusion_matrix(
+                    plot_file=args.plot,
+                    fontsize=args.fontsize,
+                    type_ids=type_ids
+                    )
             else:
-                c.plot_confusion_matrix(args.plot)
+                c.plot_confusion_matrix(
+                    plot_file=args.plot,
+                    type_ids=type_ids,
+                    )
         else:
-                c.plot_confusion_matrix()
+                c.plot_confusion_matrix(
+                    type_ids=type_ids,
+                    )
 
     print("accuracy=%.4f" % c.final_accuracy)
