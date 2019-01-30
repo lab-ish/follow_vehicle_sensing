@@ -28,8 +28,9 @@ class Vehicles():
         # type is described by type_id instead of type name such as 'normal' and 'bike'
         self.data['type_id'] = -1
         vehicle_types = self.data.type.unique()
-        for i in range(len(vehicle_types)):
-            self.data.loc[self.data.type == vehicle_types[i], 'type_id'] = i
+        self.type_ids = dict(zip(range(len(vehicle_types)), vehicle_types))
+        for type_id in self.type_ids.keys():
+            self.data.loc[self.data.type == self.type_ids[type_id], 'type_id'] = type_id
 
         return
 
