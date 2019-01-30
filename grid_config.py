@@ -16,15 +16,21 @@ import subprocess
 
 #==========================================================================
 class GridConfig():
-    def __init__(self, config_out, param_out, base=None):
+    def __init__(self, config_out=None, base=None, param_dir=None):
         self.config_out = config_out # 出力configファイル名（上書き）
-        self.param_out = param_out   # パラメータの組み合わせの保存先（上書き）
+        if self.config_out is None:
+            self.config_out = datetime.datetime.today().strftime("config_%s.py")
 
         # ベースネーム
         self.save_base = base
         if self.save_base is None:
             now = datetime.datetime.today().strftime("%Y%m%d_%H%M")
             self.save_base = now
+
+        # パラメータの組み合わせの保存先（上書き）
+        if param_dir is None:
+            param_dir = ""
+        self.param_out = param_dir + "/" + self.save_base + "_grid.csv"
 
         return
 
@@ -52,7 +58,7 @@ class GridConfig():
         return
 
     #----------------------------------------------------------------------
-    def exec_grid(self):
+    def generate_combinations(self):
         # パラメータが取る値のリストを取得
         param_values = [self.param_set[x] for x in self.param_names]
         # パラメータの組み合わせを生成
@@ -60,15 +66,19 @@ class GridConfig():
         # 制約を満たさないものは除外
         param_combs = filter(lambda x: self.constraints(dict(zip(self.param_names, x))),
                              list(param_combs))
-        param_combs = list(param_combs)
+        return list(param_combs)
+
+    #----------------------------------------------------------------------
+    def exec_grid(self):
+        param_combs = self.generate_combinations()
 
         # 各組み合わせで評価を実行
-        num_iter = len(param_combs)
+        num_iter = len(param_combs) - 1
         with open(self.param_out, "w") as f:
             f.write("# config_file,%s\n" % ",".join(self.param_names))
-        cnt = 1
+        cnt = 0
         for p in param_combs:
-            print("%d/%d" % (cnt, num_iter))
+            print("grid %d/%d" % (cnt, num_iter))
             param = dict(zip(self.param_names, p))
 
             # パラメータの組み合わせでconfigを生成
@@ -123,16 +133,20 @@ def arg_parser():
     ap.add_argument("param_file", type=str, action="store",
                     help="input file including parameter set",
                     )
-    ap.add_argument("param_out", type=str, action="store",
-                    help="output file name storing parameter combination set",
+    ap.add_argument("-t", "--test", action="store_true",
+                    help="print the number of combinations and exit",
+                    )
+    ap.add_argument("-p", "--param_dir", type=str, action="store",
+                    default=None,
+                    help="output directory of parameter combinations info",
                     )
     ap.add_argument("-c", "--config_out", type=str, action="store",
                     default=None,
-                    help="output config file name",
+                    help="output config file name (default example: config_1548849936.py)",
                     )
     ap.add_argument("-b", "--base", type=str, action="store",
                     default=None,
-                    help="base name for output files",
+                    help="base name for output files (default example: 20190124_1855)",
                     )
     return ap
 
@@ -142,12 +156,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # grid searchクラスをインスタンス化
-    if args.config_out is None:
-        args.config_out = datetime.datetime.today().strftime("config_%s.py")
-    g = GridConfig(args.config_out, args.param_out, args.base)
+    g = GridConfig(args.config_out, args.base, args.param_dir)
 
     # パラメータ情報を読み込み
     g.load_param_set(args.param_file)
 
-    # グリッド実行
-    g.exec_grid()
+    if args.test:
+        # 何パターンの組み合わせがあるのかを表示して終了
+        comb = g.generate_combinations()
+        print(len(comb))
+    else:
+        # グリッド実行
+        g.exec_grid()
