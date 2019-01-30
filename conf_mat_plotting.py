@@ -85,6 +85,9 @@ def arg_parser():
     # ap.add_argument("-d", "--debug", action="store_true",
     #                 help="debug mode",
     #                 )
+    ap.add_argument("-n", "--no_plot", action="store_true",
+                    help="no plot output",
+                    )
     ap.add_argument("-p", "--plot", action="store",
                     default=None,
                     help="confusion matrix plotting output file name",
@@ -113,12 +116,13 @@ if __name__ == '__main__':
     c.finalize()
 
     # confusion matrixをプロットして保存
-    if args.plot is not None:
-        if args.fontsize is not None:
-            c.plot_confusion_matrix(args.plot, fontsize=args.fontsize)
+    if args.no_plot:
+        if args.plot is not None:
+            if args.fontsize is not None:
+                c.plot_confusion_matrix(args.plot, fontsize=args.fontsize)
+            else:
+                c.plot_confusion_matrix(args.plot)
         else:
-            c.plot_confusion_matrix(args.plot)
-    else:
-            c.plot_confusion_matrix()
+                c.plot_confusion_matrix()
 
     print("accuracy=%.4f" % c.final_accuracy)
