@@ -24,7 +24,7 @@ def arg_parser():
                     default="config.py",
                     help="config file",
                     )
-    ap.add_argument("-b", "--basename", type=str, action="store",
+    ap.add_argument("-b", "--base", type=str, action="store",
                     default=None,
                     help="base name for output files",
                     )
