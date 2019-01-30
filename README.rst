@@ -16,6 +16,7 @@ Required Libraries
 * matplotlib
 * seaborn
 * scikit-learn
+* imblearn
 
 Submodules
 ==========
