@@ -106,11 +106,14 @@ if __name__ == '__main__':
     # 集計
     g.summarize()
 
+    # 並べ替え
+    sorted_param = g.lim_param.sort_values('accuracy')
+
     if args.output is not None:
         print("output saved in %s" % args.output)
         with open(args.output, "w") as f:
             f.write("# ")
         with open(args.output, "a") as f:
-            g.lim_param.to_csv(f)
+            sorted_param.to_csv(f)
     else:
-        print(g.lim_param)
+        print(sorted_param)
