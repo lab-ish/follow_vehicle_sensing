@@ -3,22 +3,20 @@
 LANG=C
 LC_ALL=C
 
-
 # 使用法
 usage() {
-    echo "$0 <parameter_info.csv>"
+    echo "$0 <python_prog> <parameter_info.tsv>"
 }
 
 # 引数の個数チェック
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
     echo "Invalid arguments" >&2
     usage
     exit 1
 fi
 
-# パラメータ情報csvファイル
-param_csv=$1
-
+python_prog=$1			# 実行するpythonプログラムファイル
+param_csv=$2 			# パラメータ情報tsvファイル
 
 #----------------------------------------------------------------------
 now=$(date +%Y%m%d_%H%M)
@@ -26,11 +24,11 @@ now=$(date +%Y%m%d_%H%M)
 # 2列目がconfigファイル情報
 conf_files=$(cat ${param_csv} \
 		 | egrep -v "^#" \
-		 | cut -d',' -f2)
+		 | cut -d'	' -f2)
 max_cnt=$(tail -1 ${param_csv} \
-	       | cut -d',' -f1)
+	       | cut -d'	' -f1)
 
-# 1つ目のconfigに書かれている出力先にパラメータ情報csvファイルをコピー
+# 1つ目のconfigに書かれている出力先にパラメータ情報tsvファイルをコピー
 topconf=$(echo "$conf_files" | head -1)
 outdir=$(grep "outdir" ${topconf} \
 	     | tr -d ' ' \
@@ -44,6 +42,6 @@ echo "${conf_files}" \
     echo "--------------------------------------------------"
     echo "grid: ${cnt}/${max_cnt}"
     date
-    python3 main.py -c ${f} -b ${now}_${cnt}
+    python3 ${python_prog} -c ${f} -b ${now}_${cnt}
     cnt=`expr ${cnt} + 1`
 done

@@ -83,7 +83,7 @@ confusion matrixのプロットは ``conf_matrix_plotting.py`` を使用して�
 
 .. code-block:: bash
 
-   % python3 grid_config.py -p conf/params.csv grid.py
+   % python3 grid_config.py -p conf/params.tsv grid.py
 
 なお、パラメータの組み合わせが何パターンとなるのかは ``-t`` オプションで確認できる。
 ``-t`` オプションが指定されていれば設定ファイル群は生成されない。
@@ -97,9 +97,9 @@ confusion matrixのプロットは ``conf_matrix_plotting.py`` を使用して�
 
 .. code-block:: bash
 
-   % ./grid.sh conf/params.csv
+   % ./grid_exec.sh main.py conf/params.csv
 
-パラメータ情報ファイルは実行時に日付が付加されてコピーされる（\ ``results/20190130_2230_params.csv``\ など）。
+パラメータ情報ファイルは実行時に日付が付加されてコピーされる（\ ``results/20190130_2230_params.tsv``\ など）。
 
 解析
 ----
