@@ -28,7 +28,7 @@ class GridSummary():
         self.param_in = param_file # parameter組み合わせ情報のファイル名
 
         # パラメータ情報ファイルを読み込み
-        self.param = pd.read_csv(param_file)
+        self.param = pd.read_csv(param_file, sep='\t')
         # カラム名の最初を補正
         first_col = self.param.columns[0]
         self.param = self.param.rename(columns={first_col: re.sub('#[ ]*', '', first_col)})
