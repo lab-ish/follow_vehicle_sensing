@@ -49,7 +49,7 @@ Usage
 Confusion Matrixの描画
 ----------------------
 
-confusion matrixのプロットは ``conf_matrix_plotting.py`` を使用して描く。
+confusion matrixのプロットは ``conf_mat_plotting.py`` を使用して描く。
 引数に上記のconfusion matrixファイルを指定する。
 
 .. code-block:: bash
@@ -67,6 +67,8 @@ confusion matrixのプロットは ``conf_matrix_plotting.py`` を使用して�
 .. code-block:: bash
 
    % python3 conf_mat_plotting.py -p test.eps -c results/20190131_0749_config.py results/20190131_0749_result.csv
+
+``-r`` オプションを指定するとパーセント表示でconfusion matrixを描く。
 
 パラメータを振っての実行（Grid Search）
 =======================================

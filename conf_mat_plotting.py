@@ -31,7 +31,7 @@ class ConfMatPlotting():
         return (self.final_conf_matrix, self.final_accuracy)
 
     #----------------------------------------------------------------------
-    def plot_confusion_matrix(self, plot_file=None, fontsize=14, type_ids=None):
+    def plot_confusion_matrix(self, plot_file=None, fontsize=14, type_ids=None, percentile=False):
         fig = plt.figure()
 
         if plot_file is not None:
@@ -51,10 +51,19 @@ class ConfMatPlotting():
         if type_ids is not None:
             labels = np.array(sorted(type_ids.items()))[:,1]
 
-        sns.heatmap(self.final_conf_matrix,
+        if percentile:
+            label_sums = self.final_conf_matrix.sum(axis=1)
+            label_sums = np.tile(label_sums, [self.classes, 1]).T
+            final_conf_matrix = self.final_conf_matrix / label_sums * 1e2
+            fmt = ".1f"
+        else:
+            final_conf_matrix = self.final_conf_matrix
+            fmt = "d",
+
+        sns.heatmap(final_conf_matrix,
                     cmap="Blues",
                     annot=True,
-                    fmt="d",
+                    fmt=fmt,
                     cbar=False,
                     xticklabels=labels,
                     yticklabels=labels,
@@ -68,7 +77,7 @@ class ConfMatPlotting():
             plt.savefig(plot_file)
 
         plt.close()
-        return
+        return final_conf_matrix
 
     #----------------------------------------------------------------------
     def load_result(self, result_file):
@@ -112,6 +121,9 @@ def arg_parser():
                     default=None,
                     help="config file name to load type/type_id association",
                     )
+    ap.add_argument("-r", "--percentile", action="store_true",
+                    help="Plot percentile form",
+                    )
     return ap
 
 #----------------------------------------------------------------------
@@ -152,16 +164,19 @@ if __name__ == '__main__':
                 c.plot_confusion_matrix(
                     plot_file=args.plot,
                     fontsize=args.fontsize,
-                    type_ids=type_ids
+                    type_ids=type_ids,
+                    percentile=args.percentile,
                     )
             else:
                 c.plot_confusion_matrix(
                     plot_file=args.plot,
                     type_ids=type_ids,
+                    percentile=args.percentile,
                     )
         else:
                 c.plot_confusion_matrix(
                     type_ids=type_ids,
+                    percentile=args.percentile,
                     )
 
     print("accuracy=%.4f" % c.final_accuracy)
