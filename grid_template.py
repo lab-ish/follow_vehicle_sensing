@@ -22,7 +22,7 @@ def constraints(params):
 # *** 1つしか値をとらないパラメータもリストとして定義すること
 
 # 出力先ディレクトリ
-outdir = ["results"]
+outdir = ["result"]
 
 # 推定クラスのファイル名
 est_class = ["estimate_svm.py"]
