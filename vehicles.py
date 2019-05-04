@@ -24,6 +24,7 @@ class Vehicles():
         self.data = pd.read_csv(self.datafile,
                                 sep="\t",
                                 header=0,
+                                index_col=0,
                                 )
         # type is described by type_id instead of type name such as 'normal' and 'bike'
         self.data['type_id'] = -1
@@ -32,7 +33,38 @@ class Vehicles():
         for type_id in self.type_ids.keys():
             self.data.loc[self.data.type == self.type_ids[type_id], 'type_id'] = type_id
 
+        # ordery by t0 (passing time)
+        self.data = self.data.sort_values('t0').reset_index(drop=True)
         return
+
+    #--------------------------------------------------
+    def num_simul_successive(self, simul_range=2):
+        diff = np.diff(self.data.t0)
+        self.data['diff_pos'] = np.append(diff, np.inf)
+        self.data['diff_pre'] = np.insert(diff, 0, np.inf)
+        self.data['diff_closer'] = np.min(self.data[['diff_pos', 'diff_pre']], axis=1)
+
+        dirs = np.array(self.data.dir)
+        self.data['dir_pos'] = np.append(dirs[1:], np.nan)
+        self.data['dir_pre'] = np.insert(dirs[:-1], 0, np.nan)
+        self.data['dir_closer'] = self.data.apply(
+            lambda x: x.dir_pos if x.diff_pos < x.diff_pre else x.dir_pre,
+            axis=1)
+
+        # extract simul or successive
+        self.data['is_simul'] = False
+        self.data['is_succ']  = False
+        self.data.loc[(self.data.diff_closer < simul_range) & (self.data.dir == self.data.dir_closer), 'is_simul'] = True
+        self.data.loc[(self.data.diff_closer < simul_range) & (self.data.dir != self.data.dir_closer), 'is_succ'] = True
+
+        # drop unnecessary columns
+        self.data = self.data.drop(['diff_pos', 'diff_pre', 'diff_closer', 'dir_pos', 'dir_pre', 'dir_closer'], axis=1)
+
+        ret = {}
+        ret['simul'] = self.data.is_simul.sum()
+        ret['succ']  = self.data.is_succ.sum()
+
+        return ret
 
     #----------------------------------------------------------------------
     def calc_feature(self, t0, v, label):
