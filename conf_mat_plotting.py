@@ -55,7 +55,7 @@ class ConfMatPlotting():
             label_sums = self.final_conf_matrix.sum(axis=1)
             label_sums = np.tile(label_sums, [self.classes, 1]).T
             final_conf_matrix = self.final_conf_matrix / label_sums * 1e2
-            fmt = ".1f"
+            fmt = ".2f"
         else:
             final_conf_matrix = self.final_conf_matrix
             fmt = "d"
