@@ -41,7 +41,7 @@ class ConfMatPlotting():
             # plt.rcParams['axes.linewidth'] = 1              # 軸の太さ
             fig.subplots_adjust(bottom = 0.15)              # 下の余白を増やす
 
-            if os.path.splitext(plot_file)[1] == "eps":
+            if os.path.splitext(plot_file)[1] == ".eps":
                 # EPS出力のためのおまじない
                 plt.rcParams['ps.useafm'] = True
                 plt.rcParams['pdf.use14corefonts'] = True
@@ -58,7 +58,7 @@ class ConfMatPlotting():
             fmt = ".1f"
         else:
             final_conf_matrix = self.final_conf_matrix
-            fmt = "d",
+            fmt = "d"
 
         sns.heatmap(final_conf_matrix,
                     cmap="Blues",
