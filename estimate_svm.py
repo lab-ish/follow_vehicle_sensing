@@ -92,12 +92,12 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         skf = StratifiedKFold(n_splits=folds, shuffle=True)
 
         count = 0
+        uniq, counts = np.unique(y, return_counts=True)
+        counts[:] = np.min(counts)
+        sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)))
         for rep in range(repeat):
             # resample data to balance the training/test data
             print("resample data to balance")
-            uniq, counts = np.unique(y, return_counts=True)
-            counts[:] = np.min(counts)
-            sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=0)
             x_resamp, y_resamp = sampler.fit_sample(x, y)
 
             for train_idx, test_idx in skf.split(x_resamp, y_resamp):
