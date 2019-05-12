@@ -82,7 +82,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         return test_score, conf_mat
 
     #----------------------------------------------------------------------
-    def cross_validation(self, folds=10, repeat=1):
+    def validate(self, folds=10, repeat=1):
         # data
         x = self.feature_matrix[:,:-1]
         # label
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     e.feature_extraction()
 
     # estimate
-    e.cross_validation(folds=args.folds, repeat=args.repeats)
+    e.validate(folds=args.folds, repeat=args.repeats)
 
     # finalize results
     if args.outfile is not None:

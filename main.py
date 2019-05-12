@@ -112,7 +112,7 @@ if __name__ == '__main__':
     e.feature_extraction()
 
     # 推定
-    e.cross_validation(folds=config.folds, repeat=config.repeats)
+    e.validate(folds=config.folds, repeat=config.repeats)
 
     # 最終結果をとりまとめ
     e.load_result(e.result_file)
