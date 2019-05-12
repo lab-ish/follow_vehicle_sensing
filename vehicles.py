@@ -26,6 +26,13 @@ class Vehicles():
                                 header=0,
                                 index_col=0,
                                 )
+        self.assign_type_ids()
+        # ordery by t0 (passing time)
+        self.data = self.data.sort_values('t0').reset_index(drop=True)
+        return
+
+    #----------------------------------------------------------------------
+    def assign_type_ids(self):
         # type is described by type_id instead of type name such as 'normal' and 'bike'
         self.data['type_id'] = -1
         vehicle_types = self.data.type.unique()
@@ -33,11 +40,9 @@ class Vehicles():
         for type_id in self.type_ids.keys():
             self.data.loc[self.data.type == self.type_ids[type_id], 'type_id'] = type_id
 
-        # ordery by t0 (passing time)
-        self.data = self.data.sort_values('t0').reset_index(drop=True)
         return
 
-    #--------------------------------------------------
+    #----------------------------------------------------------------------
     def num_simul_successive(self, simul_range=2):
         diff = np.diff(self.data.t0)
         self.data['diff_pos'] = np.append(diff, np.inf)

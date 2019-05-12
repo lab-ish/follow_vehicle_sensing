@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     # 車両情報への前処理を実施
     if 'pre_process' in list(config.__dict__.keys()):
-        veh.data = config.pre_process(veh.data)
+        config.pre_process(veh)
 
     # 車両種別と車両種別IDの対応を設定ファイルに追記
     with open(save_base + "_config.py", "a") as f:
