@@ -76,29 +76,32 @@ class Vehicles():
         return np.c_[fet, lab]
 
     #----------------------------------------------------------------------
-    def calc_features(self):
+    def calc_features(self, data=None):
         if self.extract_feature is None:
             return None
 
         if self.data is None:
             self.load_data()
 
+        if data is None:
+            data = self.data
+
         # calculate feature for first vehicle
-        ret = self.calc_feature(self.data.iloc[0].t0,
-                                self.data.iloc[0].v,
-                                self.data.iloc[0].type_id)
+        ret = self.calc_feature(data.iloc[0].t0,
+                                data.iloc[0].v,
+                                data.iloc[0].type_id)
         # retrive the length of feature_matrix
         ret_len = ret.shape[0]
         # reserve space for features
-        result = np.empty([ret_len*len(self.data), ret.shape[1]])
+        result = np.empty([ret_len*len(data), ret.shape[1]])
 
         # store the first feature
         result[0:ret_len,:] = ret
         # calculate and store feature for remaining vehicles
-        for i in range(1,len(self.data)):
-            ret = self.calc_feature(self.data.iloc[i].t0,
-                                    self.data.iloc[i].v,
-                                    self.data.iloc[i].type_id)
+        for i in range(1,len(data)):
+            ret = self.calc_feature(data.iloc[i].t0,
+                                    data.iloc[i].v,
+                                    data.iloc[i].type_id)
             result[ret_len*i:ret_len*(i+1),:] = ret
 
         return result
