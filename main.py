@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2018, Shigemi ISHIDA
+# Copyright (c) 2018-2019, Shigemi ISHIDA
 # All rights reserved.
 #
 # DO NOT REDISTRIBUTE THIS PROGRAM NOR A PART OF THIS PROGRAM.
@@ -90,6 +90,13 @@ if __name__ == '__main__':
     # 車両情報を読み込み
     print("load vehicle data %s" % config.vehicle_info)
     veh.load_data()
+
+    # 同時・連続通過を判定
+    veh.num_simul_successive()
+
+    # 車両情報への前処理を実施
+    if 'pre_process' in list(config.__dict__keys())
+        veh.data = config.pre_process(veh.data)
 
     # 車両種別と車両種別IDの対応を設定ファイルに追記
     with open(save_base + "_config.py", "a") as f:

@@ -16,10 +16,6 @@ class Estimate(estimate_svm.Estimate):
 
     #----------------------------------------------------------------------
     def feature_extraction(self):
-        # extract TPs in vehicles
-        self.vehicles.data = self.vehicles.data.loc[self.vehicles.data.detect &
-                                                    self.vehicles.data.correct].reset_index(drop=True)
-
         # calculate features
         print("calculate features")
         self.train_matrix = self.vehicles.calc_features(
@@ -53,19 +49,17 @@ class Estimate(estimate_svm.Estimate):
         counts[:] = np.min(counts)
         sampler2 = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=random_state)
 
-        count = 0
         for rep in range(repeat):
             # resample data to balance the training/test data
             print("resample data to balance")
             train_x_resamp, train_y_resamp = sampler1.fit_sample(train_x, train_y)
             test_x_resamp, test_y_resamp   = sampler2.fit_sample(test_x, test_y)
 
-            print("iter=%d" % count)
+            print("iter=%d" % rep)
             score, conf_mat = self.eval(train_x_resamp, train_y_resamp,
                                         test_x_resamp,  test_y_resamp)
             self.save_result(conf_mat)
             self.save_score(score)
-            count += 1
 
         return True
 
