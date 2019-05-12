@@ -51,11 +51,11 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         return
 
     #----------------------------------------------------------------------
-    def define_model(self):
+    def define_model(self, random_state=None):
         # release model
         del self.model
         # reload model
-        self.model = svm.LinearSVC(loss='hinge', C=1.0, class_weight='balanced', random_state=0)
+        self.model = svm.LinearSVC(loss='hinge', C=1.0, class_weight='balanced', random_state=random_state)
 
         return self.model
 
@@ -82,7 +82,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         return test_score, conf_mat
 
     #----------------------------------------------------------------------
-    def validate(self, folds=10, repeat=1):
+    def validate(self, folds=10, repeat=1, random_state=None):
         # data
         x = self.feature_matrix[:,:-1]
         # label
@@ -92,12 +92,12 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         skf = StratifiedKFold(n_splits=folds, shuffle=True)
 
         count = 0
+        uniq, counts = np.unique(y, return_counts=True)
+        counts[:] = np.min(counts)
+        sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=random_state)
         for rep in range(repeat):
             # resample data to balance the training/test data
             print("resample data to balance")
-            uniq, counts = np.unique(y, return_counts=True)
-            counts[:] = np.min(counts)
-            sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=0)
             x_resamp, y_resamp = sampler.fit_sample(x, y)
 
             for train_idx, test_idx in skf.split(x_resamp, y_resamp):
