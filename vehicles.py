@@ -23,6 +23,7 @@ class Vehicles():
     def load_data(self):
         self.data = pd.read_csv(self.datafile,
                                 sep="\t",
+                                na_values='-',
                                 header=0,
                                 index_col=0,
                                 )
