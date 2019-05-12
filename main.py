@@ -95,7 +95,7 @@ if __name__ == '__main__':
     veh.num_simul_successive()
 
     # 車両情報への前処理を実施
-    if 'pre_process' in list(config.__dict__keys())
+    if 'pre_process' in list(config.__dict__keys()):
         veh.data = config.pre_process(veh.data)
 
     # 車両種別と車両種別IDの対応を設定ファイルに追記
