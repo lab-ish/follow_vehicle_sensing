@@ -102,8 +102,7 @@ if __name__ == '__main__':
         f.write("}\n")
 
     # 推定クラスをインスタンス化
-    e = est_class.Estimate(ext_feature = ext,
-                           vehicles    = veh,
+    e = est_class.Estimate(vehicles    = veh,
                            result_file = "%s_result.csv" % (save_base),
                            score_file  = "%s_score.csv" % (save_base),
                            )
