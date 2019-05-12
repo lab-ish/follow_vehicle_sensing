@@ -21,13 +21,11 @@ import conf_mat_plotting
 #==========================================================================
 class Estimate(conf_mat_plotting.ConfMatPlotting):
     def __init__(self,
-                 ext_feature=None, # feature extraction class instance
                  vehicles=None,    # vehicle information class instance
                  result_file=None, # output filename for results
                  score_file=None,  # output filename for test score
                  ):
         super(Estimate, self).__init__()
-        self.ext_feature = ext_feature
         self.vehicles    = vehicles
         self.result_file = result_file
         self.score_file  = score_file
@@ -199,7 +197,6 @@ if __name__ == '__main__':
 
     # estimation class instance
     e = Estimate(
-        ext_feature = ext,
         vehicles    = veh,
         result_file = args.outfile,
         score_file  = args.scorefile,

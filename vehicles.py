@@ -23,9 +23,17 @@ class Vehicles():
     def load_data(self):
         self.data = pd.read_csv(self.datafile,
                                 sep="\t",
+                                na_values='-',
                                 header=0,
                                 index_col=0,
                                 )
+        self.assign_type_ids()
+        # ordery by t0 (passing time)
+        self.data = self.data.sort_values('t0').reset_index(drop=True)
+        return
+
+    #----------------------------------------------------------------------
+    def assign_type_ids(self):
         # type is described by type_id instead of type name such as 'normal' and 'bike'
         self.data['type_id'] = -1
         vehicle_types = self.data.type.unique()
@@ -33,11 +41,9 @@ class Vehicles():
         for type_id in self.type_ids.keys():
             self.data.loc[self.data.type == self.type_ids[type_id], 'type_id'] = type_id
 
-        # ordery by t0 (passing time)
-        self.data = self.data.sort_values('t0').reset_index(drop=True)
         return
 
-    #--------------------------------------------------
+    #----------------------------------------------------------------------
     def num_simul_successive(self, simul_range=2):
         diff = np.diff(self.data.t0)
         self.data['diff_pos'] = np.append(diff, np.inf)
@@ -76,29 +82,32 @@ class Vehicles():
         return np.c_[fet, lab]
 
     #----------------------------------------------------------------------
-    def calc_features(self):
+    def calc_features(self, data=None):
         if self.extract_feature is None:
             return None
 
         if self.data is None:
             self.load_data()
 
+        if data is None:
+            data = self.data
+
         # calculate feature for first vehicle
-        ret = self.calc_feature(self.data.iloc[0].t0,
-                                self.data.iloc[0].v,
-                                self.data.iloc[0].type_id)
+        ret = self.calc_feature(data.iloc[0].t0,
+                                data.iloc[0].v,
+                                data.iloc[0].type_id)
         # retrive the length of feature_matrix
         ret_len = ret.shape[0]
         # reserve space for features
-        result = np.empty([ret_len*len(self.data), ret.shape[1]])
+        result = np.empty([ret_len*len(data), ret.shape[1]])
 
         # store the first feature
         result[0:ret_len,:] = ret
         # calculate and store feature for remaining vehicles
-        for i in range(1,len(self.data)):
-            ret = self.calc_feature(self.data.iloc[i].t0,
-                                    self.data.iloc[i].v,
-                                    self.data.iloc[i].type_id)
+        for i in range(1,len(data)):
+            ret = self.calc_feature(data.iloc[i].t0,
+                                    data.iloc[i].v,
+                                    data.iloc[i].type_id)
             result[ret_len*i:ret_len*(i+1),:] = ret
 
         return result

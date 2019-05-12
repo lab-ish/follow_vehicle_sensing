@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2018, Shigemi ISHIDA
+# Copyright (c) 2018-2019, Shigemi ISHIDA
 # All rights reserved.
 #
 # DO NOT REDISTRIBUTE THIS PROGRAM NOR A PART OF THIS PROGRAM.
@@ -91,6 +91,13 @@ if __name__ == '__main__':
     print("load vehicle data %s" % config.vehicle_info)
     veh.load_data()
 
+    # 同時・連続通過を判定
+    veh.num_simul_successive()
+
+    # 車両情報への前処理を実施
+    if 'pre_vehicle' in list(config.__dict__.keys()):
+        config.pre_vehicle(veh)
+
     # 車両種別と車両種別IDの対応を設定ファイルに追記
     with open(save_base + "_config.py", "a") as f:
         f.write("\n")
@@ -102,8 +109,7 @@ if __name__ == '__main__':
         f.write("}\n")
 
     # 推定クラスをインスタンス化
-    e = est_class.Estimate(ext_feature = ext,
-                           vehicles    = veh,
+    e = est_class.Estimate(vehicles    = veh,
                            result_file = "%s_result.csv" % (save_base),
                            score_file  = "%s_score.csv" % (save_base),
                            )
