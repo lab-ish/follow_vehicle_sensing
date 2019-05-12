@@ -94,7 +94,7 @@ class Estimate(conf_mat_plotting.ConfMatPlotting):
         count = 0
         uniq, counts = np.unique(y, return_counts=True)
         counts[:] = np.min(counts)
-        sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state)
+        sampler = RandomUnderSampler(ratio=dict(zip(uniq, counts)), random_state=random_state)
         for rep in range(repeat):
             # resample data to balance the training/test data
             print("resample data to balance")
