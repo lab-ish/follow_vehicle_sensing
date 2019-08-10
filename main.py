@@ -91,8 +91,8 @@ if __name__ == '__main__':
     print("load vehicle data %s" % config.vehicle_info)
     veh.load_data()
 
-    # 同時・連続通過を判定
-    veh.num_simul_successive()
+    # # 同時・連続通過を判定
+    # veh.num_simul_successive()
 
     # 車両情報への前処理を実施
     if 'pre_vehicle' in list(config.__dict__.keys()):
