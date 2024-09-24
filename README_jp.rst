@@ -117,40 +117,40 @@ confusion matrixのプロットは ``conf_mat_plotting.py`` を使用して描�
 Our Papers
 ==========
 
-- B. Dawton, S. Ishida, Y. Hori, M. Uchino, Y. Arakawa, S. Tagashira, and A. Fukuda
-  Initial Evaluation of Vehicle Type Identification using Roadside Stereo Microphones
+- B. Dawton, S. Ishida, Y. Hori, M. Uchino, Y. Arakawa, S. Tagashira, and A. Fukuda,
+  "Initial Evaluation of Vehicle Type Identification using Roadside Stereo Microphones",
   IEEE Sensors and Applications Symposium (SAS), Kuala Lumpur, Malaysia, pp.1-6, Mar 2020.
   https://doi.org/10.1109/SAS48726.2020.9220076
-- M. Uchino, B. Dawton, Y. Hori, S. Ishida, S. Tagashira, Y. Arakawa, and A. Fukuda
-  Initial Design of Two-Stage Acoustic Vehicle Detection System for High Traffic Roads
+- M. Uchino, B. Dawton, Y. Hori, S. Ishida, S. Tagashira, Y. Arakawa, and A. Fukuda,
+  "Initial Design of Two-Stage Acoustic Vehicle Detection System for High Traffic Roads",
   International Workshop on Pervasive Computing for Vehicular Systems (PerVehicle), in conjunction with IEEE International Conference on Pervasive Computing and Communications (PerCom), Austin, TX, pp.590-595, Mar 2020.
   https://doi.org/10.1109/PerComWorkshops48775.2020.9156248
-- 内野 雅人, 石田 繁巳, 田頭 茂明, 荒川 豊, 福田 晃
-  多車線道路に対応した2段階音響車両検出システムの初期的評価
+- 内野 雅人, 石田 繁巳, 田頭 茂明, 荒川 豊, 福田 晃,
+  "多車線道路に対応した2段階音響車両検出システムの初期的評価",
   マルチメディア通信と分散処理ワークショップ（DPSWS2019）, pp.84-90, Nov 2019.
   http://id.nii.ac.jp/1001/00199833/
-- S. Ishida, M. Uchino, C. Li, S. Tagashira, and A. Fukuda
-  Design of Acoustic Vehicle Detector with Steady-Noise Suppression
+- S. Ishida, M. Uchino, C. Li, S. Tagashira, and A. Fukuda,
+  "Design of Acoustic Vehicle Detector with Steady-Noise Suppression",
   IEEE International Conference on Intelligent Transportation Systems (ITSC), Auckland, New Zealand, pp.2848-2853, Oct 2019.
   https://doi.org/10.1109/ITSC.2019.8917289
-- 石田 繁巳, 内野 雅人, 小池 大地, 田頭 茂明, 福田 晃
-  路側設置ステレオマイクを用いた車両種別推定手法の初期的評価
+- 石田 繁巳, 内野 雅人, 小池 大地, 田頭 茂明, 福田 晃,
+  "路側設置ステレオマイクを用いた車両種別推定手法の初期的評価",
   情報処理学会マルチメディア, 分散, 協調とモバイルシンポジウム（DICOMO2019）, pp.1682-1687, Jul 2019.
   http://id.nii.ac.jp/1001/00202424/
-- M. Uchino, S. Ishida, K. Kubo, S. Tagashira, and A. Fukuda
-  Initial Design of Acoustic Vehicle Detector with Wind Noise Suppressor
+- M. Uchino, S. Ishida, K. Kubo, S. Tagashira, and A. Fukuda,
+  "Initial Design of Acoustic Vehicle Detector with Wind Noise Suppressor",
   International Workshop on Pervasive Computing for Vehicular Systems (PerVehicle), in conjunction with IEEE International Conference on Pervasive Computing and Communications (PerCom), Kyoto, Japan, pp.814-819, Mar 2019.
   https://doi.org/10.1109/PERCOMW.2019.8730822
-- 石田 繁巳, 梶村 順平, 内野 雅人, 田頭 茂明, 福田 晃
-  路側設置マイクロフォンを用いた逐次検出型車両検出システム
+- 石田 繁巳, 梶村 順平, 内野 雅人, 田頭 茂明, 福田 晃,
+  "路側設置マイクロフォンを用いた逐次検出型車両検出システム",
   情報処理学会論文誌, vol.60, no.1, pp.76-86, Jan 2019.
   http://id.nii.ac.jp/1001/00193796/
-- S. Ishida, J. Kajimura, M. Uchino, S. Tagashira, and A. Fukuda
-  SAVeD: Acoustic Vehicle Detector with Speed Estimation capable of Sequential Vehicle Detection
+- S. Ishida, J. Kajimura, M. Uchino, S. Tagashira, and A. Fukuda,
+  "SAVeD: Acoustic Vehicle Detector with Speed Estimation capable of Sequential Vehicle Detection",
   IEEE International Conference on Intelligent Transportation Systems (ITSC), Maui, HI, pp.906-912, Nov 2018.
   https://doi.org/10.1109/ITSC.2018.8569727
-- 石田 繁巳, 三村 晃平, 劉 嵩, 田頭 茂明, 福田 晃
-  路側設置マイクロフォンによる車両カウントシステム
+- 石田 繁巳, 三村 晃平, 劉 嵩, 田頭 茂明, 福田 晃,
+  "路側設置マイクロフォンによる車両カウントシステム",
   情報処理学会論文誌, vol.58, no.1, pp.89-98, Jan 2017.
 
 

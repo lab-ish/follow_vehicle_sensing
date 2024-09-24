@@ -107,24 +107,24 @@ ipython >>> sorted_param
 ```
 ## Our Papers
 
-- B. Dawton, S. Ishida, Y. Hori, M. Uchino, Y. Arakawa, S. Tagashira, and A. Fukuda
-  Initial Evaluation of Vehicle Type Identification using Roadside Stereo Microphones
+- B. Dawton, S. Ishida, Y. Hori, M. Uchino, Y. Arakawa, S. Tagashira, and A. Fukuda,
+  "Initial Evaluation of Vehicle Type Identification using Roadside Stereo Microphones",
   IEEE Sensors and Applications Symposium (SAS), Kuala Lumpur, Malaysia, pp.1-6, Mar 2020.
   https://doi.org/10.1109/SAS48726.2020.9220076
-- M. Uchino, B. Dawton, Y. Hori, S. Ishida, S. Tagashira, Y. Arakawa, and A. Fukuda
-  Initial Design of Two-Stage Acoustic Vehicle Detection System for High Traffic Roads
+- M. Uchino, B. Dawton, Y. Hori, S. Ishida, S. Tagashira, Y. Arakawa, and A. Fukuda,
+  "Initial Design of Two-Stage Acoustic Vehicle Detection System for High Traffic Roads",
   International Workshop on Pervasive Computing for Vehicular Systems (PerVehicle), in conjunction with IEEE International Conference on Pervasive Computing and Communications (PerCom), Austin, TX, pp.590-595, Mar 2020.
   https://doi.org/10.1109/PerComWorkshops48775.2020.9156248
-- S. Ishida, M. Uchino, C. Li, S. Tagashira, and A. Fukuda
-  Design of Acoustic Vehicle Detector with Steady-Noise Suppression
+- S. Ishida, M. Uchino, C. Li, S. Tagashira, and A. Fukuda,
+  "Design of Acoustic Vehicle Detector with Steady-Noise Suppression",
   IEEE International Conference on Intelligent Transportation Systems (ITSC), Auckland, New Zealand, pp.2848-2853, Oct 2019.
   https://doi.org/10.1109/ITSC.2019.8917289
-- M. Uchino, S. Ishida, K. Kubo, S. Tagashira, and A. Fukuda
-  Initial Design of Acoustic Vehicle Detector with Wind Noise Suppressor
+- M. Uchino, S. Ishida, K. Kubo, S. Tagashira, and A. Fukuda,
+  "Initial Design of Acoustic Vehicle Detector with Wind Noise Suppressor",
   International Workshop on Pervasive Computing for Vehicular Systems (PerVehicle), in conjunction with IEEE International Conference on Pervasive Computing and Communications (PerCom), Kyoto, Japan, pp.814-819, Mar 2019.
   https://doi.org/10.1109/PERCOMW.2019.8730822
-- S. Ishida, J. Kajimura, M. Uchino, S. Tagashira, and A. Fukuda
-  SAVeD: Acoustic Vehicle Detector with Speed Estimation capable of Sequential Vehicle Detection
+- S. Ishida, J. Kajimura, M. Uchino, S. Tagashira, and A. Fukuda,
+  "SAVeD: Acoustic Vehicle Detector with Speed Estimation capable of Sequential Vehicle Detection",
   IEEE International Conference on Intelligent Transportation Systems (ITSC), Maui, HI, pp.906-912, Nov 2018.
   https://doi.org/10.1109/ITSC.2018.8569727
 
